@@ -73,6 +73,13 @@ if (!fs.existsSync(uploadsDir)) {
 }
 app.use('/uploads', express.static(uploadsDir, { maxAge: '7d', etag: true }));
 
+function toPublicMediaUrl(url: string, req: express.Request): string {
+  if (!url || /^https?:\/\//i.test(url)) return url;
+  const configuredOrigin = process.env.PUBLIC_SERVER_URL || process.env.SERVER_PUBLIC_URL || process.env.STORAGE_PUBLIC_URL_PREFIX;
+  const origin = (configuredOrigin || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '');
+  return `${origin}${url.startsWith('/') ? url : `/${url}`}`;
+}
+
 // Storage & Database Health / Status Endpoint
 app.get('/api/system/storage-status', (_req, res) => {
   res.json({
@@ -98,7 +105,7 @@ app.post('/api/upload-media-binary', async (req, res) => {
 
     return res.json({
       success: uploadResult.success,
-      url: uploadResult.url,
+      url: toPublicMediaUrl(uploadResult.url, req),
       mediaType: uploadResult.mediaType,
       size: uploadResult.size,
       filename: uploadResult.filename,
@@ -511,7 +518,7 @@ function canPerformModeration(
 
   // 2. Action-specific constraints (Admin Only powers)
   if (action === 'ban' && actor.role !== 'admin') {
-    return { allowed: false, reason: 'صلاحية الباند والحظر الدائم محصورة بمدير النظام (Admin) فقط.' };
+    return { allowed: false, reason: 'صلاحية الباند والحظر الدائ�� محصورة بمدير النظام (Admin) فقط.' };
   }
 
   if (action === 'updateLikes' && actor.role !== 'admin') {
@@ -1238,7 +1245,7 @@ let staffMemos: StaffMemo[] = [
     id: 'memo-2',
     author: '★ ﺟﻨﺘﻞ ★',
     role: 'admin',
-    text: 'تم حظر مستخدم كان يكرر نشر روابط إعلانات مخالفة على الخاص والتأكد من هدوء الغرف.',
+    text: 'تم حظر مستخدم كان يكرر نشر روابط إعلا��ات مخالفة على الخاص والتأكد من هدوء الغرف.',
     priority: 'normal',
     timestamp: Date.now() - 7200000,
     timeFormatted: 'اليوم 06:15 م'
@@ -2158,7 +2165,7 @@ io.on('connection', (socket) => {
   socket.on('updateGlobalAppearance', ({ theme, fontFamily, wallpaper, bubbleStyle, bannerUrl, logoUrl }: Partial<GlobalAppearance>) => {
     const admin = users.find((u) => u.id === socket.id);
     if (!admin || (admin.role !== 'admin' && admin.role !== 'super')) {
-      socket.emit('systemAlert', 'تعميم الثيم والخط العام محصور بطاقم الإدارة.');
+      socket.emit('systemAlert', 'تعميم الثيم والخط ��لعام محصور بطاقم الإدارة.');
       return;
     }
     if (theme) globalAppearance.theme = theme;
@@ -2203,10 +2210,10 @@ io.on('connection', (socket) => {
     io.emit('userStyleUpdated', {
       username: user.username,
       nameColor: user.nameColor,
-      textColor: user.textColor,
-      nameGradient: user.nameGradient,
-      profileBg: user.profileBg
-    });
+          textColor: user.textColor,
+          nameGradient: user.nameGradient,
+          profileBg: user.profileBg
+        });
 
     if (user.room) {
       io.to(user.room).emit('roomUsers', { room: user.room, users: users.filter((u) => u.room === user.room) });
@@ -3495,7 +3502,7 @@ io.on('connection', (socket) => {
 
     const roomSettings = getRoomSettings(user.room);
     if (roomSettings.isVoiceLocked && user.role !== 'admin' && user.role !== 'super') {
-      socket.emit('micError', 'المايكات مقفلة ومحصورة حالياً على الإدارة والمشرفين فقط.');
+      socket.emit('micError', 'المايكات مقفلة ومحصورة حالياً على الإدارة والمشرفين فق��.');
       return;
     }
 
@@ -3859,7 +3866,7 @@ io.on('connection', (socket) => {
         settings.isChatLocked = Boolean(value);
         io.to(room).emit('roomSettingsUpdated', { room, settings });
         logMonitorEvent('role', `${settings.isChatLocked ? 'قفل' : 'فتح'} الشات العام في [${room}] بواسطة ${admin.username}`, admin.username);
-        io.to(room).emit('systemAlert', settings.isChatLocked ? '🔒 تم قفل الشات العام مؤقتاً بقرار إداري.' : '🔓 تم فتح الشات العام للجميع.');
+        io.to(room).emit('systemAlert', settings.isChatLocked ? '🔒 تم قفل الشات العام ��ؤقتاً بقرار إداري.' : '🔓 تم فتح الشات العام للجميع.');
         break;
       }
 
@@ -3961,6 +3968,7 @@ io.on('connection', (socket) => {
           io.to(target.id).emit('systemAlert', `تم حذف صورتك الشخصية بواسطة الإدارة (${admin.username}) لمخالفتها الآداب العامة.`);
         }
         io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
+        io.emit('userStyleUpdated', { username: uName, avatarUrl: undefined });
         logMonitorEvent('role', `حذف صورة ${uName} بواسطة [${admin.role.toUpperCase()}] ${admin.username}`, admin.username, uName);
         socket.emit('systemAlert', `تم حذف صورة ${uName} بنجاح.`);
         break;
@@ -3982,6 +3990,7 @@ io.on('connection', (socket) => {
             io.to(target.id).emit('systemAlert', `تم تحديث صورتك الشخصية بواسطة الإدارة (${admin.username}).`);
           }
           io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
+          io.emit('userStyleUpdated', { username: uName, avatarUrl: value });
           logMonitorEvent('role', `تحديث صورة ${uName} بواسطة [${admin.role.toUpperCase()}] ${admin.username}`, admin.username, uName);
           socket.emit('systemAlert', `تم تحديث صورة ${uName} بنجاح.`);
         }
@@ -4345,6 +4354,7 @@ io.on('connection', (socket) => {
       username,
       statusQuote,
       avatarUrl,
+      nameBannerUrl,
       password,
       flag,
       nameColor,
@@ -4353,6 +4363,7 @@ io.on('connection', (socket) => {
       username?: string;
       statusQuote?: string;
       avatarUrl?: string;
+      nameBannerUrl?: string;
       password?: string;
       flag?: string;
       nameColor?: string;
@@ -4380,6 +4391,7 @@ io.on('connection', (socket) => {
       // user.flag is preserved from real country IP detection
       if (statusQuote !== undefined) user.statusQuote = sanitizeText(statusQuote);
       if (avatarUrl !== undefined) user.avatarUrl = avatarUrl;
+      if (nameBannerUrl !== undefined) user.nameBannerUrl = nameBannerUrl.trim() || undefined;
       if (nameColor !== undefined) user.nameColor = nameColor;
       if (textColor !== undefined) user.textColor = textColor;
 
@@ -4391,6 +4403,7 @@ io.on('connection', (socket) => {
           flag: user.flag,
           statusQuote: user.statusQuote,
           avatarUrl: user.avatarUrl,
+          nameBannerUrl: user.nameBannerUrl,
           likes: user.likes || 0,
           points: user.points || 100,
           nameColor: user.nameColor,
@@ -4400,6 +4413,7 @@ io.on('connection', (socket) => {
         if (password) registeredMembers[user.username].password = hashPassword(password);
         registeredMembers[user.username].statusQuote = user.statusQuote;
         if (avatarUrl !== undefined) registeredMembers[user.username].avatarUrl = avatarUrl;
+        if (nameBannerUrl !== undefined) registeredMembers[user.username].nameBannerUrl = user.nameBannerUrl;
         if (user.flag) registeredMembers[user.username].flag = user.flag;
         if (nameColor !== undefined) (registeredMembers[user.username] as any).nameColor = nameColor;
         if (textColor !== undefined) (registeredMembers[user.username] as any).textColor = textColor;
@@ -4408,6 +4422,8 @@ io.on('connection', (socket) => {
 
       io.emit('userStyleUpdated', {
         username: user.username,
+        avatarUrl: user.avatarUrl,
+        nameBannerUrl: user.nameBannerUrl,
         nameColor: user.nameColor,
         textColor: user.textColor,
         nameGradient: user.nameGradient,
