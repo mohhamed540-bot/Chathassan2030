@@ -1884,7 +1884,7 @@ io.on('connection', (socket) => {
     socket.emit('emblemsUpdated', emblemsConfig);
   });
 
-  socket.on('addEmblem', ({
+  socket.on('addEmblem', async ({
     type,
     title,
     imageUrl,
@@ -1941,7 +1941,13 @@ io.on('connection', (socket) => {
     };
 
     emblemsConfig.items.unshift(newItem);
-    saveEmblems();
+    try {
+      await saveEmblems();
+    } catch {
+      emblemsConfig.items.shift();
+      socket.emit('systemAlert', 'تعذر حفظ الرمز في قاعدة البيانات. لم يتم اعتماد التغيير.');
+      return;
+    }
     io.emit('emblemsUpdated', emblemsConfig);
     logMonitorEvent(
       'security',
@@ -1951,31 +1957,44 @@ io.on('connection', (socket) => {
     socket.emit('systemAlert', `تمت إضافة ${type === 'emoji' ? `الفيس بنجاح بالكود التلقائي (${shortcut})` : 'الرمز بنجاح'} ✅`);
   });
 
-  socket.on('deleteEmblem', ({ id }: { id: string }) => {
+  socket.on('deleteEmblem', async ({ id }: { id: string }) => {
     const admin = users.find((u) => u.id === socket.id);
     if (!admin || (admin.role !== 'admin' && admin.role !== 'super')) {
       socket.emit('systemAlert', 'حذف الرموز محصور بطاقم الإدارة.');
       return;
     }
-    const prevLen = emblemsConfig.items.length;
-    emblemsConfig.items = emblemsConfig.items.filter((item) => item.id !== id);
-    if (emblemsConfig.items.length !== prevLen) {
-      saveEmblems();
+    const previousItems = emblemsConfig.items;
+    emblemsConfig.items = previousItems.filter((item) => item.id !== id);
+    if (emblemsConfig.items.length !== previousItems.length) {
+      try {
+        await saveEmblems();
+      } catch {
+        emblemsConfig.items = previousItems;
+        socket.emit('systemAlert', 'تعذر حفظ حذف الرمز في قاعدة البيانات.');
+        return;
+      }
       io.emit('emblemsUpdated', emblemsConfig);
       logMonitorEvent('security', `حذف رمز بواسطة [${admin.username}]`, admin.username);
       socket.emit('systemAlert', 'تم حذف الرمز بنجاح 🗑️');
     }
   });
 
-  socket.on('updateEmblemEmojiSize', ({ emojiSize }: { emojiSize: EmojiSizeSetting }) => {
+  socket.on('updateEmblemEmojiSize', async ({ emojiSize }: { emojiSize: EmojiSizeSetting }) => {
     const admin = users.find((u) => u.id === socket.id);
     if (!admin || (admin.role !== 'admin' && admin.role !== 'super')) {
       socket.emit('systemAlert', 'تعديل حجم الفيسات محصور بالإدارة.');
       return;
     }
     if (['small', 'default', 'large'].includes(emojiSize)) {
+      const previousEmojiSize = emblemsConfig.emojiSize;
       emblemsConfig.emojiSize = emojiSize;
-      saveEmblems();
+      try {
+        await saveEmblems();
+      } catch {
+        emblemsConfig.emojiSize = previousEmojiSize;
+        socket.emit('systemAlert', 'تعذر حفظ حجم الرموز في قاعدة البيانات.');
+        return;
+      }
       io.emit('emblemsUpdated', emblemsConfig);
       logMonitorEvent('security', `تعديل حجم عرض الفيسات إلى [${emojiSize}] بواسطة [${admin.username}]`, admin.username);
       socket.emit('systemAlert', `تم ضبط حجم الفيسات الافتراضي إلى (${emojiSize === 'small' ? 'صغير' : emojiSize === 'large' ? 'كبير' : 'افتراضي'}) بنجاح 📏`);
