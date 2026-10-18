@@ -2724,7 +2724,17 @@ export default function App() {
         triggerAnnouncementDisplay(8000);
       }
       if ((data as any).emblemsConfig) {
-        setEmblemsConfig((data as any).emblemsConfig);
+        const serverEmblems = (data as any).emblemsConfig as EmblemsConfig;
+        setEmblemsConfig(serverEmblems);
+        // The server is the source of truth so a new device never falls back to its old local cache.
+        if (serverEmblems.falconChatBanner) {
+          setFalconChatBanner(serverEmblems.falconChatBanner);
+          try { localStorage.setItem('falcon_chat_banner', serverEmblems.falconChatBanner); } catch {}
+        }
+        if (serverEmblems.falconAvatarIcon) {
+          setFalconAvatarIcon(serverEmblems.falconAvatarIcon);
+          try { localStorage.setItem('falcon_avatar_icon', serverEmblems.falconAvatarIcon); } catch {}
+        }
       }
       if ((data as any).stories) {
         setStoriesList((data as any).stories);
@@ -2805,7 +2815,7 @@ export default function App() {
     });
 
     // Global Appearance Updates for all users (التطبيق العام للثيم والخط لكافة المستخدمين)
-    s.on('globalAppearanceUpdated', (data: { theme?: string; fontFamily?: string; wallpaper?: string; bubbleStyle?: string; bannerUrl?: string }) => {
+    s.on('globalAppearanceUpdated', (data: { theme?: string; fontFamily?: string; wallpaper?: string; bubbleStyle?: string; bannerUrl?: string; logoUrl?: string }) => {
       if (data.theme) {
         setActiveTheme(data.theme);
         localStorage.setItem('soqoor_theme', data.theme);
@@ -2824,6 +2834,12 @@ export default function App() {
       }
       if (data.bannerUrl !== undefined) {
         setGlobalBannerUrl(data.bannerUrl);
+        setFalconChatBanner(data.bannerUrl || DEFAULT_FALCON_CHAT_BANNER);
+        try { localStorage.setItem('falcon_chat_banner', data.bannerUrl || DEFAULT_FALCON_CHAT_BANNER); } catch {}
+      }
+      if (data.logoUrl) {
+        setFalconAvatarIcon(data.logoUrl);
+        try { localStorage.setItem('falcon_avatar_icon', data.logoUrl); } catch {}
       }
       showToast('📢 تم تطبيق وتعميم الثيم والخط العام على كافة الشات من الإدارة', 'info');
     });
@@ -5767,7 +5783,7 @@ export default function App() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 font-black text-xs text-amber-950">
                     <BellRing className="w-4 h-4 text-amber-600 animate-pulse" />
-                    <span>تنبيهات المتصفح بالخلفية (Web Notifications API)</span>
+                    <span>تنبيهات ��لمتصفح بالخلفية (Web Notifications API)</span>
                   </div>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                     notificationPermission === 'granted'
@@ -7228,7 +7244,7 @@ export default function App() {
                   type="button"
                   onClick={() => {
                     setIsWatchingLive(false);
-                    socket?.emit('leaveLiveViewer', { room: currentUser.room || 'الغرفة العامة' });
+                    socket?.emit('leaveLiveViewer', { room: currentUser.room || 'الغ��فة العامة' });
                   }}
                   className="w-7 h-7 rounded-lg bg-black/40 hover:bg-black/60 text-white flex items-center justify-center cursor-pointer transition-colors"
                   title="إغلا�� شاشة البث"
@@ -13102,7 +13118,7 @@ export default function App() {
                                   openUserProfile(visitorUser);
                                   setShowProfileVisitorsModal(false);
                                 } else {
-                                  showToast(`العضو [${v.username}] غير متصل حالياً`, 'info');
+                                  showToast(`العضو [${v.username}] غير متصل حا��ياً`, 'info');
                                 }
                               }}
                               className="px-2 py-0.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-[10px] font-bold cursor-pointer transition-colors"
@@ -13242,7 +13258,7 @@ export default function App() {
                     className="w-full py-3 bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:to-rose-600 text-white font-black rounded-xl shadow-lg cursor-pointer transition-all flex items-center justify-center gap-2 text-sm animate-pulse active:scale-[0.98]"
                   >
                     <Video className="w-4 h-4" />
-                    <span>ابدأ البث المباشر الآن 🔴</span>
+                    <span>ابدأ الب�� المباشر الآن 🔴</span>
                   </button>
                   <button
                     type="button"
@@ -13488,7 +13504,7 @@ export default function App() {
               <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                 <div className="font-bold text-sm text-amber-300 flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-amber-400" />
-                  <span>نشر خاطرة / حالة جديدة (24 ساعة)</span>
+                  <span>نشر خ��طرة / حالة جديدة (24 ساعة)</span>
                 </div>
                 <button
                   type="button"
