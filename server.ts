@@ -983,11 +983,12 @@ export let emblemsConfig: EmblemsConfig = {
   falconAvatarIcon: DEFAULT_FALCON_AVATAR_ICON
 };
 
-export function saveEmblems() {
+export async function saveEmblems(): Promise<void> {
   try {
-    dataManager.saveEmblems(emblemsConfig);
+    await dataManager.saveEmblems(emblemsConfig);
   } catch (err) {
     console.error('Error saving emblems:', err);
+    throw err;
   }
 }
 
@@ -1073,11 +1074,12 @@ export function loadRolePermissions() {
   }
 }
 
-export function saveGlobalAppearance() {
+export async function saveGlobalAppearance(): Promise<void> {
   try {
-    dataManager.saveGlobalAppearance(globalAppearance);
+    await dataManager.saveGlobalAppearance(globalAppearance);
   } catch (err) {
     console.error('Error saving global appearance:', err);
+    throw err;
   }
 }
 
@@ -2043,8 +2045,12 @@ io.on('connection', (socket) => {
       }
 
       if (changed) {
-        saveEmblems();
-        saveGlobalAppearance();
+        try {
+          await Promise.all([saveEmblems(), saveGlobalAppearance()]);
+        } catch {
+          socket.emit('systemAlert', 'تعذر حفظ الصور وإعدادات المظهر في قاعدة البيانات. لم يتم اعتماد التغيير.');
+          return;
+        }
         io.emit('emblemsUpdated', emblemsConfig);
         io.emit('falconAssetsUpdated', {
           falconChatBanner: emblemsConfig.falconChatBanner,
@@ -2257,7 +2263,7 @@ io.on('connection', (socket) => {
     socket.emit('globalAppearanceUpdated', globalAppearance);
   });
 
-  socket.on('updateGlobalAppearance', ({ theme, fontFamily, wallpaper, bubbleStyle, bannerUrl, logoUrl }: Partial<GlobalAppearance>) => {
+  socket.on('updateGlobalAppearance', async ({ theme, fontFamily, wallpaper, bubbleStyle, bannerUrl, logoUrl }: Partial<GlobalAppearance>) => {
     const admin = users.find((u) => u.id === socket.id);
     if (!admin || (admin.role !== 'admin' && admin.role !== 'super')) {
       socket.emit('systemAlert', 'تعميم الثيم والخط للعام محصور بطاقم الإدارة.');
@@ -2269,8 +2275,13 @@ io.on('connection', (socket) => {
     if (bubbleStyle) globalAppearance.bubbleStyle = bubbleStyle;
     if (bannerUrl !== undefined) globalAppearance.bannerUrl = bannerUrl;
     if (logoUrl !== undefined) globalAppearance.logoUrl = logoUrl;
-    saveGlobalAppearance();
-    io.emit('globalAppearanceUpdated', globalAppearance);
+  try {
+    await saveGlobalAppearance();
+  } catch {
+    socket.emit('systemAlert', 'تعذر حفظ إعدادات المظهر في قاعدة البيانات. لم يتم اعتماد التغيير.');
+    return;
+  }
+  io.emit('globalAppearanceUpdated', globalAppearance);
     logMonitorEvent('role', `تعميم مظهر الشات (ثيم: ${globalAppearance.theme}، خط: ${globalAppearance.fontFamily}) بواسطة ${admin.username}`, admin.username);
     socket.emit('systemAlert', 'تم تعميم وتحديث مظهر الشات على كافة الأعضاء بنجاح 📢');
   });
@@ -3444,7 +3455,7 @@ io.on('connection', (socket) => {
       const elapsed = (Date.now() - lastSent) / 1000;
       if (elapsed < roomSettings.slowModeSeconds) {
         const remaining = Math.ceil(roomSettings.slowModeSeconds - elapsed);
-        socket.emit('systemAlert', `وضع الدردشة البطيء مفعل: يرجى الانتظار ${remaining} ثواني قبل إرسال رسالتك القادمة.`);
+        socket.emit('systemAlert', `وضع الدردشة البطيء مفعل: يرجى الانتظار ${remaining} ثواني قبل إرسال رسالتك القادم��.`);
         return;
       }
       userLastMessageTime[socket.id] = Date.now();

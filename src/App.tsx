@@ -1379,7 +1379,6 @@ export default function App() {
   // Keep the login screen hidden until the server's shared appearance has loaded.
   // This prevents the local default banner/theme from flashing before MongoDB data arrives.
   const [appearanceReady, setAppearanceReady] = useState(false);
-  const [globalBannerUrl, setGlobalBannerUrl] = useState<string>('');
   const [falconChatBanner, setFalconChatBanner] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('falcon_chat_banner') || DEFAULT_FALCON_CHAT_BANNER;
@@ -1461,7 +1460,7 @@ export default function App() {
     }
   };
 
-  // Auto prune stale typing indicators every 1s (مسح أي مؤشر كتابة قديم تلقائياً بعد 4 ثوانٍ)
+  // Auto prune stale typing indicators every 1s (مسح أي مؤشر ��تابة قديم تلقائياً بعد 4 ثوانٍ)
   useEffect(() => {
     if (typingUsers.length === 0) return;
     const interval = setInterval(() => {
@@ -1749,7 +1748,7 @@ export default function App() {
   ]);
   const [newFilterWordInput, setNewFilterWordInput] = useState('');
 
-  // Live Broadcast Video & Audio (بث لايف فيديو وصوت حقيقي للغرفة)
+  // Live Broadcast Video & Audio (بث لايف ��يديو وصوت حقيقي للغرفة)
   const [isBroadcastingLive, setIsBroadcastingLive] = useState(false);
   const [isWatchingLive, setIsWatchingLive] = useState(false);
   const [activeRoomLiveBroadcast, setActiveRoomLiveBroadcast] = useState<RoomLiveBroadcastState | null>(null);
@@ -2760,10 +2759,9 @@ export default function App() {
         if (ga.bubbleStyle) setBubbleStyle(ga.bubbleStyle);
         // The shared appearance is authoritative. Keep both branding state values
         // aligned so a cached local banner cannot win the first render.
-        if (ga.bannerUrl) {
-          setGlobalBannerUrl(ga.bannerUrl);
-          setFalconChatBanner(ga.bannerUrl);
-        }
+  if (ga.bannerUrl) {
+    setFalconChatBanner(ga.bannerUrl);
+  }
         if (ga.logoUrl) {
           setFalconAvatarIcon(ga.logoUrl);
         }
@@ -2855,9 +2853,8 @@ export default function App() {
         setBubbleStyle(data.bubbleStyle);
         localStorage.setItem('soqoor_bubble_style', data.bubbleStyle);
       }
-      if (data.bannerUrl !== undefined) {
-        setGlobalBannerUrl(data.bannerUrl);
-        setFalconChatBanner(data.bannerUrl || DEFAULT_FALCON_CHAT_BANNER);
+  if (data.bannerUrl !== undefined) {
+    setFalconChatBanner(data.bannerUrl || DEFAULT_FALCON_CHAT_BANNER);
         try { localStorage.setItem('falcon_chat_banner', data.bannerUrl || DEFAULT_FALCON_CHAT_BANNER); } catch {}
       }
       if (data.logoUrl) {
@@ -5032,9 +5029,9 @@ export default function App() {
 
           {/* Banner (Dynamic uploaded falcon_chat_banner or pure CSS header) */}
           <div className="relative w-full aspect-[2.1/1] overflow-hidden border-b border-[#2e261d] bg-gradient-to-br from-[#241a12] via-[#362517] to-[#120d09] flex flex-col justify-end p-3 text-right">
-            {(falconChatBanner || globalBannerUrl) ? (
-              <img
-                src={falconChatBanner || globalBannerUrl}
+  {falconChatBanner ? (
+  <img
+  src={falconChatBanner}
                 alt="شات حسان برو"
                 className="absolute inset-0 w-full h-full object-cover"
               />
