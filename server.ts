@@ -27,8 +27,18 @@ const app = express();
 app.set('trust proxy', 1);
 
 // Production, Security, and Cross-Origin Headers
+const allowedOrigins = new Set(
+  [process.env.CORS_ORIGIN, process.env.FRONTEND_URL, process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined]
+    .filter((origin): origin is string => Boolean(origin))
+    .map((origin) => origin.replace(/\/$/, ''))
+);
+
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const requestOrigin = req.headers.origin;
+  if (requestOrigin && (allowedOrigins.has(requestOrigin) || process.env.NODE_ENV !== 'production')) {
+    res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+    res.setHeader('Vary', 'Origin');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-filename, x-mime-type, x-mediatype');
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -47,7 +57,12 @@ httpServer.headersTimeout = 320000;
 
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: '*',
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.has(origin) || process.env.NODE_ENV !== 'production') {
+        return callback(null, true);
+      }
+      return callback(new Error('Origin not allowed'));
+    },
     methods: ['GET', 'POST'],
     credentials: true
   },
@@ -3783,7 +3798,7 @@ io.on('connection', (socket) => {
       case 'kick': {
         if (target) {
           const kickReason = reason || 'مخالفة قوانين وقواعد شات حسان برو';
-          logMonitorEvent('kick', `طرد ${target.username} بواسطة [${admin.role.toUpperCase()}] ${admin.username} (السبب: ${kickReason})`, admin.username, target.username);
+          logMonitorEvent('kick', `طرد ${target.username} بواسطة [${admin.role.toUpperCase()}] ${admin.username} (��لسبب: ${kickReason})`, admin.username, target.username);
           io.to(target.id).emit('kickedByAdmin', { reason: kickReason, by: admin.username });
           
           if (target.micSlot !== null) {
@@ -4016,7 +4031,7 @@ io.on('connection', (socket) => {
             room.isPasswordProtected = false;
             delete room.password;
             io.emit('roomsUpdated', chatRooms);
-            socket.emit('systemAlert', `تمت إزالة كلمة المرور وأصبحت الغرفة [${room.name}] عامة ومفتوحة.`);
+            socket.emit('systemAlert', `تمت ��زالة كلمة المرور وأصبحت الغرفة [${room.name}] عامة ومفتوحة.`);
           }
           logMonitorEvent('role', `تعديل حماية وكلمة سر الغرفة [${room.name}] بواسطة ${admin.username}`, admin.username);
         }

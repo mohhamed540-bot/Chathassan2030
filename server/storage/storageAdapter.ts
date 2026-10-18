@@ -255,12 +255,31 @@ export class ExternalCloudStorageAdapter implements IStorageAdapter {
           }
         }
       } catch (err) {
-        console.warn(`[Storage Layer] External upload to ${this.config.endpoint} failed, seamlessly using local fallback:`, err);
+        console.error(`[Storage Layer] External upload failed:`, err);
+        const { mediaType } = this.localFallback['detectExtensionAndType'](originalFilename, mimeType);
+        return {
+          success: false,
+          url: '',
+          mediaType,
+          size: buffer.length,
+          filename: originalFilename,
+          key: '',
+          provider: this.providerName,
+          error: 'تعذر حفظ الملف في التخزين الخارجي'
+        };
       }
     }
 
-    // Seamless fallback to local storage
-    return this.localFallback.saveBuffer(buffer, originalFilename, mimeType, folder);
+    return {
+      success: false,
+      url: '',
+      mediaType: 'file',
+      size: buffer.length,
+      filename: originalFilename,
+      key: '',
+      provider: this.providerName,
+      error: 'لم يتم إعداد نقطة تخزين خارجية'
+    };
   }
 
   async saveStream(stream: NodeJS.ReadableStream, originalFilename: string, mimeType?: string, folder = ''): Promise<MediaUploadResult> {
@@ -274,11 +293,30 @@ export class ExternalCloudStorageAdapter implements IStorageAdapter {
         const fullBuffer = Buffer.concat(chunks);
         return this.saveBuffer(fullBuffer, originalFilename, mimeType, folder);
       } catch (err) {
-        console.warn(`[Storage Layer] Stream buffering for external cloud upload failed, falling back:`, err);
+        console.error(`[Storage Layer] Stream upload failed:`, err);
+        return {
+          success: false,
+          url: '',
+          mediaType: 'file',
+          size: 0,
+          filename: originalFilename,
+          key: '',
+          provider: this.providerName,
+          error: 'تعذر حفظ الملف في التخزين الخارجي'
+        };
       }
     }
 
-    return this.localFallback.saveStream(stream, originalFilename, mimeType, folder);
+    return {
+      success: false,
+      url: '',
+      mediaType: 'file',
+      size: 0,
+      filename: originalFilename,
+      key: '',
+      provider: this.providerName,
+      error: 'لم يتم إعداد نقطة تخزين خارجية'
+    };
   }
 
   async deleteFile(keyOrUrl: string): Promise<boolean> {
