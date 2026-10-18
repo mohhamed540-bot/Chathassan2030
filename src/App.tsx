@@ -2832,7 +2832,7 @@ export default function App() {
       }
     );
 
-    // General Welcome Settings Updated listener (تحديثات الرسائل الترحيبية ال��امة للشات)
+    // General Welcome Settings Updated listener (تحديثات الرسائل الترحيبية العامة للشات)
     s.on('generalWelcomeUpdated', (data: { enabled: boolean; message: string; title: string }) => {
       setGeneralWelcome(data);
     });
@@ -3619,7 +3619,7 @@ export default function App() {
     });
 
     s.on('forceMoveRoom', ({ room }: { room: string }) => {
-      showToast(`تم نقلك إلى غرفة [${room}] بواسطة الإد��رة.`, 'info');
+      showToast(`تم نقلك إلى غرفة [${room}] بواسطة الإدارة.`, 'info');
     });
 
     s.on('userRoleUpdated', ({ role }: { role: 'admin' | 'super' | 'member' | 'guest' }) => {
@@ -6103,7 +6103,7 @@ export default function App() {
                   </button>
                 </div>
                 <p className="text-[10px] text-amber-800">
-                  معرف دقيق وثابت يستخرج من خصائص معالج هاتف العضو و��قة الشاشة واللمس، ويكشف العضو حتى لو بدل اسمه أو متصفحه.
+                  معرف دقيق وثابت يستخرج من خصائص معالج هاتف العضو ودقة الشاشة واللمس، ويكشف العضو حتى لو بدل اسمه أو متصفحه.
                 </p>
               </div>
 
@@ -6255,7 +6255,7 @@ export default function App() {
                     onClick={() => {
                       const isMuted = audioManager?.toggleMute() ?? false;
                       sounds.playToggleMute(isMuted);
-                      showToast(isMuted ? 'تم كتم صوت الم����يك 🔇' : 'تم تشغيل المايك 🎙️', 'info');
+                      showToast(isMuted ? 'تم كتم صوت الميكروفون 🔇' : 'تم تشغيل المايك 🎙️', 'info');
                       setMicActionSlot(null);
                     }}
                     className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl flex items-center justify-center gap-2 border cursor-pointer transition-colors"
@@ -7534,7 +7534,7 @@ export default function App() {
                         ⋮
                       </button>
 
-                      {/* Message Action Menu (يظهر مباش��ة بجوار وأمام زر الثلاث نقاط مع منع إغلاقها عند النقر بالداخل) */}
+                      {/* Message Action Menu (يظهر مباشرة بجوار وأمام زر الثلاث نقاط مع منع إغلاقها عند النقر بالداخل) */}
                       {activeMsgMenuId === msg.id && (
                         <div
                           onClick={(e) => e.stopPropagation()}
@@ -8055,7 +8055,7 @@ export default function App() {
                 {emojiPickerTab === 'custom' && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-[10px] text-slate-400 px-1">
-                      <span>انقر على الفيس لإدراج كوده بالرسالة تلق��ئياً:</span>
+                      <span>انقر على الفيس لإدراج كوده بالرسالة تلقائياً:</span>
                       <span className="font-mono text-purple-300 font-bold">
                         {emblemsConfig.items.filter((i) => i.type === 'emoji').length} فيس متاح
                       </span>
@@ -9674,7 +9674,7 @@ export default function App() {
                                         type="button"
                                         onClick={() => handleDeleteWallComment(post.id, cm.id)}
                                         className="text-slate-400 hover:text-rose-600 p-0.5 transition-colors cursor-pointer"
-                                        title="حذف هذا التع��يق 🗑️"
+                                        title="حذف هذا التعليق 🗑️"
                                       >
                                         <Trash2 className="w-3 h-3 text-rose-500" />
                                       </button>
@@ -10526,7 +10526,7 @@ export default function App() {
                           });
                           setPmReplyingTo(null);
                           setIsPmRecordingVoice(false);
-                          showToast('تم ��رسال التسجيل الصوتي في الخاص 🎙️', 'success');
+                          showToast('تم إرسال التسجيل الصوتي في الخاص 🎙️', 'success');
                         }}
                         onCancel={() => setIsPmRecordingVoice(false)}
                       />
@@ -10745,7 +10745,7 @@ export default function App() {
                             <span>مكالمات صوت وفيديو مشفرة (P2P E2EE):</span>
                           </div>
                           <p className="text-[11px] text-slate-300 leading-relaxed">
-                            جميع المكالمات ��لصوتية والمرئية الخاصة بينك وبين <strong>{selectedPmUser.username}</strong> مشفرة من الطرفين مباشرة بتقنية WebRTC DTLS-SRTP 256-bit، ولا تمر بأي خادم وسيط أو تسجيل.
+                            جميع المكالمات الصوتية والمرئية الخاصة بينك وبين <strong>{selectedPmUser.username}</strong> مشفرة من الطرفين مباشرة بتقنية WebRTC DTLS-SRTP 256-bit، ولا تمر بأي خادم وسيط أو تسجيل.
                           </p>
                         </div>
 
@@ -10765,7 +10765,7 @@ export default function App() {
                             <span>رسائل ذاتية الاختفاء (Self-destructing):</span>
                           </div>
                           <p className="text-[11px] text-slate-300 leading-relaxed">
-                            يمكنك تفعيل مؤقت الت��مير الذاتي للرسائل والصور والتسجيلات الصوتية في أي وقت من زر اللهب 🔥، ليتم مسح الرسالة تماماً من جهازك وجهاز الطرف الآخر بمجرد انتهاء المؤقت.
+                            يمكنك تفعيل مؤقت التدمير الذاتي للرسائل والصور والتسجيلات الصوتية في أي وقت من زر اللهب 🔥، ليتم مسح الرسالة تماماً من جهازك وجهاز الطرف الآخر بمجرد انتهاء المؤقت.
                           </p>
                         </div>
 
@@ -11334,7 +11334,7 @@ export default function App() {
                       setSelectedJoinSound(sId);
                       sounds.setJoinSound(sId);
                       sounds.previewJoinSound(sId);
-                      showToast('��م حفظ نغمة دخول الأعضاء ����', 'success');
+                      showToast('تم حفظ نغمة دخول الأعضاء بنجاح', 'success');
                     }}
                     className="w-full p-2 border border-slate-300 rounded-lg text-xs bg-white text-slate-800 font-semibold outline-none focus:border-amber-600"
                   >
@@ -11472,7 +11472,7 @@ export default function App() {
                   className="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white font-black rounded shadow flex items-center justify-center gap-1.5"
                 >
                   <Shield className="w-4 h-4" />
-                  <span>★ لوحه التحكم وفلتر المراقبة</span>
+                  <span>★ لوحة التحكم وفلتر المراقبة</span>
                 </button>
               )}
 
@@ -11482,7 +11482,7 @@ export default function App() {
                 className="w-full py-2.5 bg-[#dc2626] hover:bg-red-700 text-white font-black rounded-xl shadow flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
               >
                 <LogOut className="w-4 h-4" />
-                <span>تسجيل خروج ومسح ��لمحادثات</span>
+                <span>تسجيل خروج ومسح المحادثات</span>
               </button>
             </div>
           </div>
@@ -12981,7 +12981,7 @@ export default function App() {
                   />
                 </div>
 
-                {/* Room Welcome Message Section (الرسالة الترح��بية للغرفة لمالك الغرفة) */}
+                {/* Room Welcome Message Section (الرسالة الترحيبية للغرفة لمالك الغرفة) */}
                 <div className="p-3 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-amber-950/40 border border-emerald-500/40 rounded-xl space-y-2">
                   <div className="flex items-center justify-between">
                     <div>
@@ -13256,13 +13256,13 @@ export default function App() {
                     <span>الغرفة المستهدفة: [{currentUser?.room || 'الغرفة العامة'}]</span>
                   </div>
                   <p className="text-[11px] text-slate-300 leading-relaxed">
-                    سيتم فتح الكاميرا والمايكروفون ��بث الفيديو بجودة عالية لجميع المتواجدين في الغرفة، مع إمكانية التفاعل بالرموز التعبيرية والتعليقات الحية!
+                    سيتم فتح الكاميرا والمايكروفون لبث الفيديو بجودة عالية لجميع المتواجدين في الغرفة، مع إمكانية التفاعل بالرموز التعبيرية والتعليقات الحية!
                   </p>
                 </div>
 
                 {/* Camera Selector */}
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-amber-200 block">��ختيار الكاميرا:</label>
+                  <label className="text-[11px] font-bold text-amber-200 block">اختيار الكاميرا:</label>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
@@ -13496,7 +13496,7 @@ export default function App() {
                         setBannerPickerTargetUser((prev) => prev ? { ...prev, nameBannerUrl: customBannerUrlInput.trim() } : null);
                         setProfileTargetUser((prev) => prev ? { ...prev, nameBannerUrl: customBannerUrlInput.trim() } : null);
                         setShowBannerPickerModal(false);
-                        showToast(`تم تثبيت البنر المخصص لـ [${bannerPickerTargetUser.username}] ب��جاح 🌟`, 'success');
+                        showToast(`تم تثبيت البنر المخصص لـ [${bannerPickerTargetUser.username}] بنجاح 🌟`, 'success');
                       }}
                       className="px-4 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 disabled:opacity-40 text-black font-black rounded-xl text-xs cursor-pointer shadow-md shrink-0"
                     >
@@ -13525,7 +13525,7 @@ export default function App() {
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center text-white p-4">
             <div className="bg-slate-900 border border-amber-500/60 p-5 rounded-2xl max-w-xs w-full text-center space-y-3 shadow-2xl">
               <Sparkles className="w-8 h-8 text-amber-400 mx-auto animate-spin" />
-              <div className="font-bold text-sm text-amber-300">جاري رفع ونشر ال��اطرة / الحالة...</div>
+              <div className="font-bold text-sm text-amber-300">جاري رفع ونشر الخاطرة / الحالة...</div>
               <div className="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden border border-slate-700">
                 <div
                   className="bg-gradient-to-r from-amber-500 to-yellow-400 h-full transition-all duration-200"

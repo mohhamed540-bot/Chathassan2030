@@ -1497,7 +1497,7 @@ export function parseDeviceInfo(ua?: string): string {
   return 'متصفح هاتف ذكي';
 }
 
-// Filter Alerts Log structure (سجل تنبيهات الفلتر مع الرسالة الكاملة واسم العضو ولم�� أرسلت ووقتها)
+// Filter Alerts Log structure (سجل تنبيهات الفلتر مع الرسالة الكاملة واسم العضو ولماذا أرسلت ووقتها)
 export interface FilterAlert {
   id: string;
   username: string;
@@ -2212,7 +2212,7 @@ io.on('connection', (socket) => {
     socket.emit('systemAlert', `تمت إزالة الوسام الشرفي من [${cleanUser}].`);
   });
 
-  // General Welcome Settings Listeners (إد��رة الرسائل الترحيبية العامة للشات من لوحة التحكم)
+  // General Welcome Settings Listeners (إدارة الرسائل الترحيبية العامة للشات من لوحة التحكم)
   socket.on('getGeneralWelcome', () => {
     socket.emit('generalWelcomeUpdated', generalWelcomeSettings);
   });
@@ -2933,7 +2933,7 @@ io.on('connection', (socket) => {
     bannedRecords.set(cleanName.toLowerCase(), {
       username: cleanName,
       ip: ip?.trim() || '192.168.1.100',
-      reason: reason?.trim() || 'حظر إداري يدوي مبا��ر',
+      reason: reason?.trim() || 'حظر إداري يدوي مباشر',
       bannedBy: admin.username,
       timestamp: Date.now()
     });
@@ -3098,7 +3098,7 @@ io.on('connection', (socket) => {
       saveMembers();
     } else if (loginType === 'visitor') {
       if (registeredMembers[cleanUsername] && registeredMembers[cleanUsername].role !== 'guest') {
-        socket.emit('loginError', 'هذا الاسم مسجل لعضوية خاصة بكلمة مرور. ي��جى تسجيل الدخول من تبويب [دخول الاعضاء].');
+        socket.emit('loginError', 'هذا الاسم مسجل لعضوية خاصة بكلمة مرور. يرجى تسجيل الدخول من تبويب [دخول الاعضاء].');
         return;
       }
       // Record visitor in registeredMembers so the admin sees their account and IP even offline!
@@ -3480,7 +3480,7 @@ io.on('connection', (socket) => {
       checkAndLogMonitoredWords(cleanMsg, user, { type: 'room', targetName: user.room });
     }
 
-    // Automatic Chat Shortcut Expansion (توسيع واستبدال الاختصارات تلق��ئياً)
+    // Automatic Chat Shortcut Expansion (توسيع واستبدال الاختصارات تلقائياً)
     const expandedMsg = cleanMsg ? expandShortcuts(cleanMsg) : '';
 
     // Guarantee short URLs (<1KB payload) by converting any client base64 to local disk storage
@@ -3798,7 +3798,7 @@ io.on('connection', (socket) => {
       case 'kick': {
         if (target) {
           const kickReason = reason || 'مخالفة قوانين وقواعد شات حسان برو';
-          logMonitorEvent('kick', `طرد ${target.username} بواسطة [${admin.role.toUpperCase()}] ${admin.username} (��لسبب: ${kickReason})`, admin.username, target.username);
+          logMonitorEvent('kick', `طرد ${target.username} بواسطة [${admin.role.toUpperCase()}] ${admin.username} (السبب: ${kickReason})`, admin.username, target.username);
           io.to(target.id).emit('kickedByAdmin', { reason: kickReason, by: admin.username });
           
           if (target.micSlot !== null) {
@@ -3911,7 +3911,7 @@ io.on('connection', (socket) => {
         break;
       }
 
-      // فك الإ��كات الكتابي (Unmute Text)
+      // فك الإسكات الكتابي (Unmute Text)
       case 'unmuteText': {
         if (target) {
           target.isTextMuted = false;
@@ -4031,7 +4031,7 @@ io.on('connection', (socket) => {
             room.isPasswordProtected = false;
             delete room.password;
             io.emit('roomsUpdated', chatRooms);
-            socket.emit('systemAlert', `تمت ��زالة كلمة المرور وأصبحت الغرفة [${room.name}] عامة ومفتوحة.`);
+            socket.emit('systemAlert', `تمت إزالة كلمة المرور وأصبحت الغرفة [${room.name}] عامة ومفتوحة.`);
           }
           logMonitorEvent('role', `تعديل حماية وكلمة سر الغرفة [${room.name}] بواسطة ${admin.username}`, admin.username);
         }
@@ -4211,7 +4211,7 @@ io.on('connection', (socket) => {
         break;
       }
 
-      // نقل الع��و لغرفة أخرى
+      // نقل العضو لغرفة أخرى
       case 'moveRoom': {
         if (target && value) {
           const oldRoom = target.room;
