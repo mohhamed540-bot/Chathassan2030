@@ -6221,7 +6221,7 @@ export default function App() {
                     onClick={() => {
                       const isMuted = audioManager?.toggleMute() ?? false;
                       sounds.playToggleMute(isMuted);
-                      showToast(isMuted ? 'تم كتم صوت المايك 🔇' : 'تم تشغيل المايك 🎙️', 'info');
+                      showToast(isMuted ? 'تم كتم صوت الم��يك 🔇' : 'تم تشغيل المايك 🎙️', 'info');
                       setMicActionSlot(null);
                     }}
                     className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl flex items-center justify-center gap-2 border cursor-pointer transition-colors"
@@ -8933,23 +8933,29 @@ export default function App() {
 
             {/* Section 1: المتواجدين في نفس الغرفة الحالية */}
             {(() => {
-              const currentRoomUsers = rosterUsers.filter((u) =>
-                u.username.toLowerCase().includes(searchUserQuery.toLowerCase())
-              );
+              const sortByRole = <T extends { role?: string; username: string }>(users: T[]) =>
+                [...users].sort((a, b) => {
+                  const roleDifference = (ROLE_HIERARCHY[b.role || 'guest'] || 0) - (ROLE_HIERARCHY[a.role || 'guest'] || 0);
+                  return roleDifference || a.username.localeCompare(b.username, 'ar');
+                });
 
-              const otherConnectedUsers = allConnectedUsers.filter(
+              const currentRoomUsers = sortByRole(rosterUsers.filter((u) =>
+                u.username.toLowerCase().includes(searchUserQuery.toLowerCase())
+              ));
+
+              const otherConnectedUsers = sortByRole(allConnectedUsers.filter(
                 (u) =>
                   u.room.toLowerCase() !== currentUser.room.toLowerCase() &&
                   u.username.toLowerCase().includes(searchUserQuery.toLowerCase())
-              );
+              ));
 
-              const offlineMembers = allRegisteredMembers.filter(
+              const offlineMembers = sortByRole(allRegisteredMembers.filter(
                 (m) =>
                   !m.isOnline &&
                   !allConnectedUsers.some((u) => u.username.toLowerCase() === m.username.toLowerCase()) &&
                   !rosterUsers.some((u) => u.username.toLowerCase() === m.username.toLowerCase()) &&
                   m.username.toLowerCase().includes(searchUserQuery.toLowerCase())
-              );
+              ));
 
               return (
                 <div className="flex-1 overflow-y-auto divide-y divide-slate-800/40">
@@ -13222,7 +13228,7 @@ export default function App() {
 
                 {/* Camera Selector */}
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-amber-200 block">اختيار الكاميرا:</label>
+                  <label className="text-[11px] font-bold text-amber-200 block">��ختيار الكاميرا:</label>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
