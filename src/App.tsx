@@ -2596,6 +2596,9 @@ export default function App() {
       autoConnect: true
     };
     const s = remoteServerUrl ? io(remoteServerUrl, socketOptions) : io(socketOptions);
+    // Never leave users on a blank screen when the API is temporarily unreachable.
+    // The shared appearance will still replace these defaults when the socket connects.
+    const appearanceFallbackTimer = window.setTimeout(() => setAppearanceReady(true), 8000);
 
     s.on('connect', () => {
       setIsConnected(true);
@@ -3681,8 +3684,9 @@ export default function App() {
     setAudioManager(manager);
 
     return () => {
-      clearInterval(pingTicker);
-      cleanupVisibility();
+    clearInterval(pingTicker);
+    window.clearTimeout(appearanceFallbackTimer);
+    cleanupVisibility();
       manager.destroy();
       s.removeAllListeners();
       s.disconnect();
@@ -5207,7 +5211,7 @@ export default function App() {
                   </span>
                 </div>
                 <span className="text-[11px] text-emerald-600 font-bold">
-                  ✓ الدخول التلقائي: الغرفة العامة
+                  ✓ الدخول التل��ائي: الغرفة العامة
                 </span>
               </div>
             </form>
@@ -5799,7 +5803,7 @@ export default function App() {
                             showToast('تم تفعيل إشعارات المتصفح بنجاح! 🔔', 'success');
                             sendTestNotification().catch(() => {});
                           } else if (perm === 'denied') {
-                            showToast('تم حظر الإشعارات في إعدادات المتصفح', 'error');
+                            showToast('تم حظر الإشعارات في إعدادات المتصف��', 'error');
                           }
                         });
                       }}
@@ -7896,7 +7900,7 @@ export default function App() {
                               className="max-h-56 max-w-full rounded-xl border border-slate-300 object-cover shadow-sm group-hover:scale-[1.02] transition-transform"
                             />
                             <div className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/60 text-[9px] text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                              🔍 تكبير وتحميل
+                              🔍 ��كبير وتحميل
                             </div>
                           </div>
                         )}
@@ -11618,7 +11622,7 @@ export default function App() {
                     className="w-full py-2.5 px-3 bg-gradient-to-r from-rose-500 via-pink-600 to-rose-500 hover:from-rose-600 hover:to-pink-700 text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 group"
                   >
                     <Heart className="w-4 h-4 fill-white animate-pulse group-hover:scale-125 transition-transform" />
-                    <span>إعجاب بالملف الشخصي ❤️ (+1 لايك • مرة بالدقيقة)</span>
+                    <span>إعجاب بالم��ف الشخصي ❤️ (+1 لايك • مرة بالدقيقة)</span>
                   </button>
                 </div>
               )}
@@ -13783,7 +13787,7 @@ export default function App() {
                     <Activity className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-white">حالة الاتصال والجلسة</h3>
+                    <h3 className="font-bold text-sm text-white">حال�� الاتصال والجلسة</h3>
                     <p className="text-[10px] text-amber-300/70">مراقبة الجلسة اللحظية وسرعة الخادم</p>
                   </div>
                 </div>
