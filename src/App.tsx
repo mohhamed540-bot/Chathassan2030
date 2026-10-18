@@ -2569,7 +2569,10 @@ export default function App() {
     } catch {}
 
     // Connect to custom backend URL (e.g. Railway when hosted on Vercel) or current origin (when hosted on Railway)
-    const remoteServerUrl = (import.meta.env.VITE_SERVER_URL as string) || undefined;
+    const remoteServerUrl =
+      (import.meta.env.VITE_SERVER_URL as string) ||
+      (import.meta.env.VITE_API_URL as string) ||
+      undefined;
     const socketOptions = {
       reconnection: true,
       reconnectionAttempts: Infinity,
@@ -3741,7 +3744,7 @@ export default function App() {
       setIsSubmitting(false);
     });
 
-    const defaultQuote = activeTab === 'visitor' ? 'زائر' : 'عضو جديد';
+    const defaultQuote = activeTab === 'visitor' ? 'زائر' : 'عضو جدي��';
     const clientFingerprint = generateDeviceFingerprint().fingerprintId;
 
     socket.emit('joinRoom', {
@@ -5156,7 +5159,7 @@ export default function App() {
                   </span>
                 </div>
                 <span className="text-[11px] text-emerald-600 font-bold">
-                  ✓ الدخول التلقائي: الغرفة العامة
+                  ✓ الدخول التلقائي: ا��غرفة العامة
                 </span>
               </div>
             </form>
@@ -7228,7 +7231,7 @@ export default function App() {
                     socket?.emit('leaveLiveViewer', { room: currentUser.room || 'الغرفة العامة' });
                   }}
                   className="w-7 h-7 rounded-lg bg-black/40 hover:bg-black/60 text-white flex items-center justify-center cursor-pointer transition-colors"
-                  title="إغلاق شاشة البث"
+                  title="إغلا�� شاشة البث"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -9265,7 +9268,7 @@ export default function App() {
               <div className="flex items-center justify-between text-[11px] font-bold text-slate-800">
                 <span className="flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
-                  <span>خواطر وحالات الـ 24 ساعة 📸🎥</span>
+                  <span>خواطر وح��لات الـ 24 ساعة 📸🎥</span>
                 </span>
                 <span className="text-[10px] text-amber-800 font-bold bg-amber-100/90 px-2 py-0.2 rounded-full border border-amber-300">
                   حذف تلقائي بعد 24 ساعة
@@ -11363,7 +11366,7 @@ export default function App() {
                 </div>
                 {/* Switcher to test all roles */}
                 <div className="pt-1.5 border-t border-amber-200/60">
-                  <div className="text-[10px] font-bold text-amber-900 mb-1">تبديل الرتبة للاختبار والتجربة الفورية:</div>
+                  <div className="text-[10px] font-bold text-amber-900 mb-1">تبديل الرتبة ل��اختبار والتجربة الفورية:</div>
                   <div className="grid grid-cols-3 gap-1">
                     <button
                       type="button"
