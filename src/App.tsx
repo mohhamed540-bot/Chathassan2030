@@ -359,7 +359,7 @@ const VINTAGE_STICKERS = [
 ];
 
 // Rich Message Reactions List
-const AVAILABLE_REACTIONS = ['❤️', '😂', '🦅', '👑', '🔥', '🌹', '👏', '💎', '☕', '⚔️', '🌙', '💯'];
+const AVAILABLE_REACTIONS = ['❤️', '😂', '🦅', '🥳', '🔥', '🌹', '👏', '💎', '☕', '⚔️', '🌙', '💯'];
 
 // Multi-color Visual Themes Comprehensive Styling Presets (تطبيق كامل للثيم على كافة أجزاء الشات)
 export interface ThemeFullStyle {
@@ -5288,52 +5288,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Theme & Styling Center for Login Screen */}
-        <ThemeAndWallpaperCenter
-          isOpen={showThemesModal}
-          onClose={() => setShowThemesModal(false)}
-          activeTheme={activeTheme}
-          onChangeTheme={handleUpdateTheme}
-          activeWallpaper={activeWallpaper}
-          onChangeWallpaper={handleUpdateWallpaper}
-          fontFamily={fontFamily}
-          onChangeFontFamily={handleUpdateFontFamily}
-          chatFontSize={chatFontSize}
-          onChangeFontSize={handleUpdateFontSize}
-          bubbleStyle={bubbleStyle}
-          onChangeBubbleStyle={handleUpdateBubbleStyle}
-          nameColor={settingNameColor}
-          onChangeNameColor={handleUpdateNameColor}
-          textColor={settingTextColor}
-          onChangeTextColor={handleUpdateTextColor}
-          eyeComfort={eyeComfort}
-          onToggleEyeComfort={() => {
-            const next = !eyeComfort;
-            setEyeComfort(next);
-            try {
-              localStorage.setItem('soqoor_eye_comfort', String(next));
-            } catch {}
-          }}
-          soundVolume={soundVolume}
-          onChangeSoundVolume={(v) => {
-            setSoundVolume(v);
-            sounds.setMasterVolume(v / 100);
-            try {
-              localStorage.setItem('soqoor_sound_volume', String(v));
-            } catch {}
-          }}
-          particlesEnabled={particlesEnabled}
-          onToggleParticles={() => {
-            const next = !particlesEnabled;
-            setParticlesEnabled(next);
-            try {
-              localStorage.setItem('soqoor_particles', String(next));
-            } catch {}
-          }}
-          currentUserRole={undefined}
-          onApplyGlobalAppearance={handleApplyGlobalAppearance}
-          onShowToast={showToast}
-        />
       </div>
     );
   }
@@ -11069,7 +11023,7 @@ export default function App() {
                 <span>✎ حفظ الإعدادات</span>
               </button>
 
-              {/* Change Avatar Section (Screenshot 5: تغير الصوره الشخصيه) */}
+              {/* Change Avatar Section (Screenshot 5: تغيير الصورة الشخصية) */}
               <div className="p-2.5 border rounded-lg bg-slate-50 space-y-2">
                 <div className="font-bold text-slate-800 flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
