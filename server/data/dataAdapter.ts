@@ -34,7 +34,7 @@ export interface IDataDriver {
  */
 export function getDatabaseConfigFromEnv(): DatabaseConfig {
   const rootDir = path.resolve(__dirname, '../../');
-  const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URL;
+  const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URL || process.env.MONGODB_URL || process.env.MONGO_URI;
   if (mongoUri) {
     return {
       driverType: 'mongodb',
@@ -271,6 +271,7 @@ export class MongoDbDataDriver implements IDataDriver {
   private isConnected: boolean = false;
   private memoryCache = new Map<string, any>();
   private pendingSaves = new Map<string, NodeJS.Timeout>();
+  private reconnectTimer: NodeJS.Timeout | null = null;
 
   constructor(uri: string, localDir: string, defaultDbName = 'hassanpro_chat') {
     this.uri = uri;
@@ -300,6 +301,12 @@ export class MongoDbDataDriver implements IDataDriver {
     } catch (err: any) {
       this.isConnected = false;
       console.warn(`[Data Layer - MongoDB] ⚠️ MongoDB connection delayed or failed: ${err.message || err}. Falling back to resilient local cache.`);
+      if (!this.reconnectTimer) {
+        this.reconnectTimer = setTimeout(() => {
+          this.reconnectTimer = null;
+          this.initConnection();
+        }, 15000);
+      }
     }
   }
 

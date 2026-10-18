@@ -3174,15 +3174,15 @@ export default function App() {
       setSettingQuote(user.statusQuote);
       setSettingAvatar(user.avatarUrl || '');
 
-      // Check both localStorage and server user preferences (priority: localStorage if user modified, then server)
-      const persistentNameColor = localStorage.getItem('soqoor_name_color') || user.nameColor || '#d97706';
-      const persistentTextColor = localStorage.getItem('soqoor_text_color') || user.textColor || '#0f172a';
-      const persistentNameGradient = localStorage.getItem('soqoor_name_gradient') || user.nameGradient || 'from-amber-400 to-yellow-200';
-      const persistentTheme = localStorage.getItem('soqoor_theme') || (user as any).theme || 'golden-brown-harmony';
-      const persistentFont = localStorage.getItem('soqoor_font') || (user as any).fontFamily || 'Noto Naskh Arabic';
-      const persistentFontSize = (localStorage.getItem('soqoor_chat_font_size') as any) || (user as any).fontSize || 'base';
-      const persistentWallpaper = localStorage.getItem('soqoor_wallpaper') || (user as any).wallpaper || 'default';
-      const persistentBubble = localStorage.getItem('soqoor_bubble_style') || (user as any).bubbleStyle || 'modern';
+      // The account stored on the server is authoritative so one device cannot overwrite another user's profile.
+      const persistentNameColor = user.nameColor || localStorage.getItem('soqoor_name_color') || '#d97706';
+      const persistentTextColor = user.textColor || localStorage.getItem('soqoor_text_color') || '#0f172a';
+      const persistentNameGradient = user.nameGradient || localStorage.getItem('soqoor_name_gradient') || 'from-amber-400 to-yellow-200';
+      const persistentTheme = (user as any).theme || localStorage.getItem('soqoor_theme') || 'golden-brown-harmony';
+      const persistentFont = (user as any).fontFamily || localStorage.getItem('soqoor_font') || 'Noto Naskh Arabic';
+      const persistentFontSize = (user as any).fontSize || localStorage.getItem('soqoor_chat_font_size') || 'base';
+      const persistentWallpaper = (user as any).wallpaper || localStorage.getItem('soqoor_wallpaper') || 'default';
+      const persistentBubble = (user as any).bubbleStyle || localStorage.getItem('soqoor_bubble_style') || 'modern';
 
       setSettingNameColor(persistentNameColor);
       setSettingTextColor(persistentTextColor);
@@ -3244,14 +3244,15 @@ export default function App() {
       setSettingQuote(user.statusQuote);
       setSettingAvatar(user.avatarUrl || '');
 
-      const persistentNameColor = localStorage.getItem('soqoor_name_color') || user.nameColor || '#d97706';
-      const persistentTextColor = localStorage.getItem('soqoor_text_color') || user.textColor || '#0f172a';
-      const persistentNameGradient = localStorage.getItem('soqoor_name_gradient') || user.nameGradient || 'from-amber-400 to-yellow-200';
-      const persistentTheme = localStorage.getItem('soqoor_theme') || (user as any).theme || 'golden-brown-harmony';
-      const persistentFont = localStorage.getItem('soqoor_font') || (user as any).fontFamily || 'Noto Naskh Arabic';
-      const persistentFontSize = (localStorage.getItem('soqoor_chat_font_size') as any) || (user as any).fontSize || 'base';
-      const persistentWallpaper = localStorage.getItem('soqoor_wallpaper') || (user as any).wallpaper || 'default';
-      const persistentBubble = localStorage.getItem('soqoor_bubble_style') || (user as any).bubbleStyle || 'modern';
+      // Prefer the server profile; browser storage is only a fallback for legacy anonymous settings.
+      const persistentNameColor = user.nameColor || localStorage.getItem('soqoor_name_color') || '#d97706';
+      const persistentTextColor = user.textColor || localStorage.getItem('soqoor_text_color') || '#0f172a';
+      const persistentNameGradient = user.nameGradient || localStorage.getItem('soqoor_name_gradient') || 'from-amber-400 to-yellow-200';
+      const persistentTheme = (user as any).theme || localStorage.getItem('soqoor_theme') || 'golden-brown-harmony';
+      const persistentFont = (user as any).fontFamily || localStorage.getItem('soqoor_font') || 'Noto Naskh Arabic';
+      const persistentFontSize = (user as any).fontSize || localStorage.getItem('soqoor_chat_font_size') || 'base';
+      const persistentWallpaper = (user as any).wallpaper || localStorage.getItem('soqoor_wallpaper') || 'default';
+      const persistentBubble = (user as any).bubbleStyle || localStorage.getItem('soqoor_bubble_style') || 'modern';
 
       setSettingNameColor(persistentNameColor);
       setSettingTextColor(persistentTextColor);
@@ -4057,7 +4058,7 @@ export default function App() {
     const lastTime = userLikeCooldownsRef.current[targetUsername] || 0;
     if (now - lastTime < 60000) {
       const remainingSec = Math.ceil((60000 - (now - lastTime)) / 1000);
-      showToast(`⏳ يمكنك إعطاء لايك لهذا العضو مرة واحدة كل دقيقة (متبقي ${remainingSec} ثانية)`, 'info');
+      showToast(`⏳ يمكنك إعطاء لايك له��ا العضو مرة واحدة كل دقيقة (متبقي ${remainingSec} ثانية)`, 'info');
       return;
     }
     userLikeCooldownsRef.current[targetUsername] = now;
@@ -10751,7 +10752,7 @@ export default function App() {
         )}
 
         {/* 5. CONTROL & PERMISSIONS PANEL / لوحة التحكم والصلاحيات (Screenshot 8 & Admin Suite) */}
-        {/* 5. CONTROL & PERMISSIONS PANEL / لوحة التحكم والصلاحيات الشاملة */}
+        {/* 5. CONTROL & PERMISSIONS PANEL / لوحة التحك�� والصلاحيات الشاملة */}
         {activeDrawer === "monitor" && currentUser && (
           <div className="absolute inset-y-0 right-0 w-[92%] sm:w-[86%] max-w-xl bg-[#17110c] z-40 shadow-2xl border-l border-[#4d3722] flex flex-col animate-in slide-in-from-right duration-200 text-right">
             <AdminControlSuite
@@ -11136,7 +11137,7 @@ export default function App() {
                   <div className="flex items-center justify-between text-[11px] font-bold text-amber-950">
                     <span className="flex items-center gap-1">
                       <span>📢</span>
-                      <span>نغمة الإشعار والتنبيه العام:</span>
+                      <span>نغمة ال��شعار والتنبيه العام:</span>
                     </span>
                     <button
                       type="button"
@@ -11626,7 +11627,7 @@ export default function App() {
                     className="w-full py-2.5 px-3 bg-gradient-to-r from-rose-500 via-pink-600 to-rose-500 hover:from-rose-600 hover:to-pink-700 text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 group"
                   >
                     <Heart className="w-4 h-4 fill-white animate-pulse group-hover:scale-125 transition-transform" />
-                    <span>إعجاب بالملف الشخصي ❤️ (+1 لايك • مرة بالدقيقة)</span>
+                    <span>إعجاب بالم��ف الشخصي ❤️ (+1 لايك • مرة بالدقيقة)</span>
                   </button>
                 </div>
               )}
@@ -13397,7 +13398,7 @@ export default function App() {
                                     : 'bg-amber-500 hover:bg-amber-400 text-black shadow'
                                 }`}
                               >
-                                {isCurrentlySelected ? 'مثبت حالياً ✔️' : 'تثبيت كاسم العضو 📌'}
+                                {isCurrentlySelected ? 'مثبت حالياً ✔️' : 'تثبيت كا��م العضو 📌'}
                               </button>
                             </div>
                             {/* Standard 500x50 preview box */}

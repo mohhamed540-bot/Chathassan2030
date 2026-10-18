@@ -1653,6 +1653,21 @@ function saveMembers() {
   }, 1000);
 }
 
+// MongoDB connects asynchronously on Railway. Refresh startup state after it is ready
+// so the first local fallback snapshot cannot overwrite the shared member profiles.
+setTimeout(async () => {
+  try {
+    const remoteMembers = await dataManager.loadMembers<Record<string, RegisteredMemberInfo>>({});
+    if (remoteMembers && Object.keys(remoteMembers).length > 0) {
+      Object.assign(registeredMembers, remoteMembers);
+      console.log(`[Data Layer] Refreshed ${Object.keys(remoteMembers).length} member profiles from shared storage.`);
+      io.emit('registeredMembers', getAllRegisteredMembersPayload());
+    }
+  } catch (err) {
+    console.warn('[Data Layer] Delayed member refresh skipped:', err);
+  }
+}, 8000);
+
 let saveHistoryTimer: NodeJS.Timeout | null = null;
 function saveHistory() {
   if (chatHistory.length > 500) {
@@ -1941,12 +1956,16 @@ io.on('connection', (socket) => {
         if (value.startsWith('data:')) {
           const match = value.match(/^data:([^;]+);base64,(.+)$/);
           if (match) {
-            const uploaded = await storageManager.saveBuffer(
-              Buffer.from(match[2], 'base64'),
-              filename,
-              match[1],
-              'falcon-assets'
-            );
+            const rawBuffer = Buffer.from(match[2], 'base64');
+
+            // Railway's local filesystem is ephemeral. If no external media store is
+            // configured, keep the small branding asset in MongoDB as a data URL so
+            // every instance and every device can load the same image after restart.
+            if (!storageManager.isExternal()) {
+              return value;
+            }
+
+            const uploaded = await storageManager.saveBuffer(rawBuffer, filename, match[1], 'falcon-assets');
             const configuredOrigin = process.env.PUBLIC_SERVER_URL || process.env.SERVER_PUBLIC_URL || process.env.STORAGE_PUBLIC_URL_PREFIX;
             const socketOrigin = configuredOrigin || `https://${socket.handshake.headers.host || 'localhost'}`;
             return /^https?:\/\//i.test(uploaded.url)
@@ -2993,7 +3012,8 @@ io.on('connection', (socket) => {
 
     // Check Member registration/login
     if (loginType === 'member') {
-      const member = registeredMembers[cleanUsername];
+      const memberKey = Object.keys(registeredMembers).find((key) => key.toLowerCase() === cleanUsername.toLowerCase());
+      const member = memberKey ? registeredMembers[memberKey] : undefined;
       if (!member) {
         socket.emit('loginError', 'اسم العضوية غير مسجل. يمكنك الدخول كزائر أو تسجيل عضوية جديدة.');
         return;
@@ -3390,7 +3410,7 @@ io.on('connection', (socket) => {
     // Likes Requirement Check for Room Messages
     if (user.role !== 'admin' && user.role !== 'super') {
       if (cleanMsg && likesSettings.roomTextLikes > 0 && user.likes < likesSettings.roomTextLikes) {
-        socket.emit('systemAlert', `عفواً، يتطلب إرسال النص في الغرفة ${likesSettings.roomTextLikes} لايك على الأقل. رصيدك الحالي: ${user.likes} 👍`);
+        socket.emit('systemAlert', `عفواً، يتطلب إرسال النص في الغرف�� ${likesSettings.roomTextLikes} لايك على الأقل. رصيدك الحالي: ${user.likes} 👍`);
         return;
       }
       if ((mediaUrl || voiceNote) && likesSettings.roomMediaLikes > 0 && user.likes < likesSettings.roomMediaLikes) {
@@ -4309,7 +4329,7 @@ io.on('connection', (socket) => {
         }
         io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
         logMonitorEvent('role', `منح/تعديل الوسام الشرفي لـ ${uName} [${badgeText || 'إزالة'}] بواسطة ${admin.username}`, admin.username, uName);
-        socket.emit('systemAlert', `تم تحديث الوسام الشرفي لـ ${uName} بنجاح.`);
+        socket.emit('systemAlert', `��م تحديث الوسام الشرفي لـ ${uName} بنجاح.`);
         break;
       }
 
@@ -4417,7 +4437,7 @@ io.on('connection', (socket) => {
         }
       }
 
-      // العلم الحقيقي مكتشف تلقائياً عند الدخول ومقفل لمنع اختيار أعلام وهمية
+      // العلم الحقيقي م��تشف تلقائياً عند الدخول ومقفل لمنع اختيار أعلام وهمية
       // user.flag is preserved from real country IP detection
       if (statusQuote !== undefined) user.statusQuote = sanitizeText(statusQuote);
       if (avatarUrl !== undefined) user.avatarUrl = avatarUrl;
@@ -4882,7 +4902,7 @@ io.on('connection', (socket) => {
   socket.on('pinRoomMessage', ({ messageId, unpin }: { messageId?: string; unpin?: boolean }) => {
     const user = users.find((u) => u.id === socket.id);
     if (!user || (user.role !== 'admin' && user.role !== 'super')) {
-      socket.emit('systemAlert', 'تثبيت الرسائل محصور بالإشراف والإدارة.');
+      socket.emit('systemAlert', 'تث��يت الرسائل محصور بالإشراف والإدارة.');
       return;
     }
     if (unpin) {
@@ -5556,7 +5576,7 @@ io.on('connection', (socket) => {
           io.to(user.room).emit('micSlotsUpdated', slots);
         }
 
-        logMonitorEvent('leave', `سجل ${user.username} خروجاً رسمياً من الدردشة`, user.username);
+        logMonitorEvent('leave', `سجل ${user.username} خروجاً رسم��اً من الدردشة`, user.username);
 
         if (user.isVoice) {
           io.to(user.room).emit('userLeftVoice', { userId: socket.id, username: user.username });
