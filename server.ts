@@ -2997,7 +2997,8 @@ io.on('connection', (socket) => {
 
     // Check Member registration/login
     if (loginType === 'member') {
-      const member = registeredMembers[cleanUsername];
+      const memberKey = Object.keys(registeredMembers).find((key) => key.toLowerCase() === cleanUsername.toLowerCase());
+      const member = memberKey ? registeredMembers[memberKey] : undefined;
       if (!member) {
         socket.emit('loginError', 'اسم العضوية غير مسجل. يمكنك الدخول كزائر أو تسجيل عضوية جديدة.');
         return;
@@ -3394,7 +3395,7 @@ io.on('connection', (socket) => {
     // Likes Requirement Check for Room Messages
     if (user.role !== 'admin' && user.role !== 'super') {
       if (cleanMsg && likesSettings.roomTextLikes > 0 && user.likes < likesSettings.roomTextLikes) {
-        socket.emit('systemAlert', `عفواً، يتطلب إرسال النص في الغرفة ${likesSettings.roomTextLikes} لايك على الأقل. رصيدك الحالي: ${user.likes} 👍`);
+        socket.emit('systemAlert', `عفواً، يتطلب إرسال النص في الغرف�� ${likesSettings.roomTextLikes} لايك على الأقل. رصيدك الحالي: ${user.likes} 👍`);
         return;
       }
       if ((mediaUrl || voiceNote) && likesSettings.roomMediaLikes > 0 && user.likes < likesSettings.roomMediaLikes) {
@@ -4886,7 +4887,7 @@ io.on('connection', (socket) => {
   socket.on('pinRoomMessage', ({ messageId, unpin }: { messageId?: string; unpin?: boolean }) => {
     const user = users.find((u) => u.id === socket.id);
     if (!user || (user.role !== 'admin' && user.role !== 'super')) {
-      socket.emit('systemAlert', 'تثبيت الرسائل محصور بالإشراف والإدارة.');
+      socket.emit('systemAlert', 'تث��يت الرسائل محصور بالإشراف والإدارة.');
       return;
     }
     if (unpin) {
