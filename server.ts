@@ -1653,6 +1653,21 @@ function saveMembers() {
   }, 1000);
 }
 
+// MongoDB connects asynchronously on Railway. Refresh startup state after it is ready
+// so the first local fallback snapshot cannot overwrite the shared member profiles.
+setTimeout(async () => {
+  try {
+    const remoteMembers = await dataManager.loadMembers<Record<string, RegisteredMemberInfo>>({});
+    if (remoteMembers && Object.keys(remoteMembers).length > 0) {
+      Object.assign(registeredMembers, remoteMembers);
+      console.log(`[Data Layer] Refreshed ${Object.keys(remoteMembers).length} member profiles from shared storage.`);
+      io.emit('registeredMembers', getAllRegisteredMembersPayload());
+    }
+  } catch (err) {
+    console.warn('[Data Layer] Delayed member refresh skipped:', err);
+  }
+}, 8000);
+
 let saveHistoryTimer: NodeJS.Timeout | null = null;
 function saveHistory() {
   if (chatHistory.length > 500) {
@@ -4314,7 +4329,7 @@ io.on('connection', (socket) => {
         }
         io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
         logMonitorEvent('role', `منح/تعديل الوسام الشرفي لـ ${uName} [${badgeText || 'إزالة'}] بواسطة ${admin.username}`, admin.username, uName);
-        socket.emit('systemAlert', `تم تحديث الوسام الشرفي لـ ${uName} بنجاح.`);
+        socket.emit('systemAlert', `��م تحديث الوسام الشرفي لـ ${uName} بنجاح.`);
         break;
       }
 
