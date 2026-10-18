@@ -1264,6 +1264,37 @@ loadGlobalAppearance();
 loadGeneralWelcome();
 loadEmblems();
 
+// MongoDB connects asynchronously. Re-apply cloud-backed appearance after its
+// cache is hydrated so a fresh Railway instance never serves local defaults.
+let appearanceHydrationTimer: NodeJS.Timeout | null = null;
+const refreshAppearanceFromCloud = () => {
+  if (!dataManager.isCloudConnected()) return;
+  const previousBanner = globalAppearance.bannerUrl;
+  const previousLogo = globalAppearance.logoUrl;
+  loadGlobalAppearance();
+  loadEmblems();
+  if (globalAppearance.bannerUrl !== previousBanner || globalAppearance.logoUrl !== previousLogo) {
+    io.emit('emblemsUpdated', emblemsConfig);
+    io.emit('falconAssetsUpdated', {
+      falconChatBanner: emblemsConfig.falconChatBanner,
+      falconAvatarIcon: emblemsConfig.falconAvatarIcon
+    });
+    io.emit('globalAppearanceUpdated', globalAppearance);
+  }
+};
+
+// Retry while the database connection is coming up; this is intentionally
+// bounded to a modest cadence and is cleared once the first cloud refresh succeeds.
+appearanceHydrationTimer = setInterval(() => {
+  if (dataManager.isCloudConnected()) {
+    refreshAppearanceFromCloud();
+    if (appearanceHydrationTimer) {
+      clearInterval(appearanceHydrationTimer);
+      appearanceHydrationTimer = null;
+    }
+  }
+}, 5000);
+
 // Monitoring events buffer & persistent audit log via Data Layer
 let monitorLogs: MonitorEvent[] = [];
 let auditSaveTimer: NodeJS.Timeout | null = null;
@@ -1451,7 +1482,7 @@ export function parseDeviceInfo(ua?: string): string {
   return 'متصفح هاتف ذكي';
 }
 
-// Filter Alerts Log structure (سجل تنبيهات الفلتر مع الرسالة الكاملة واسم العضو ولمن أرسلت ووقتها)
+// Filter Alerts Log structure (سجل تنبيهات الفلتر مع الرسالة الكاملة واسم العضو ولم�� أرسلت ووقتها)
 export interface FilterAlert {
   id: string;
   username: string;
@@ -2166,7 +2197,7 @@ io.on('connection', (socket) => {
     socket.emit('systemAlert', `تمت إزالة الوسام الشرفي من [${cleanUser}].`);
   });
 
-  // General Welcome Settings Listeners (إدارة الرسائل الترحيبية العامة للشات من لوحة التحكم)
+  // General Welcome Settings Listeners (إد��رة الرسائل الترحيبية العامة للشات من لوحة التحكم)
   socket.on('getGeneralWelcome', () => {
     socket.emit('generalWelcomeUpdated', generalWelcomeSettings);
   });
@@ -2887,7 +2918,7 @@ io.on('connection', (socket) => {
     bannedRecords.set(cleanName.toLowerCase(), {
       username: cleanName,
       ip: ip?.trim() || '192.168.1.100',
-      reason: reason?.trim() || 'حظر إداري يدوي مباشر',
+      reason: reason?.trim() || 'حظر إداري يدوي مبا��ر',
       bannedBy: admin.username,
       timestamp: Date.now()
     });
@@ -3052,7 +3083,7 @@ io.on('connection', (socket) => {
       saveMembers();
     } else if (loginType === 'visitor') {
       if (registeredMembers[cleanUsername] && registeredMembers[cleanUsername].role !== 'guest') {
-        socket.emit('loginError', 'هذا الاسم مسجل لعضوية خاصة بكلمة مرور. يرجى تسجيل الدخول من تبويب [دخول الاعضاء].');
+        socket.emit('loginError', 'هذا الاسم مسجل لعضوية خاصة بكلمة مرور. ي��جى تسجيل الدخول من تبويب [دخول الاعضاء].');
         return;
       }
       // Record visitor in registeredMembers so the admin sees their account and IP even offline!
@@ -3434,7 +3465,7 @@ io.on('connection', (socket) => {
       checkAndLogMonitoredWords(cleanMsg, user, { type: 'room', targetName: user.room });
     }
 
-    // Automatic Chat Shortcut Expansion (توسيع واستبدال الاختصارات تلقائياً)
+    // Automatic Chat Shortcut Expansion (توسيع واستبدال الاختصارات تلق��ئياً)
     const expandedMsg = cleanMsg ? expandShortcuts(cleanMsg) : '';
 
     // Guarantee short URLs (<1KB payload) by converting any client base64 to local disk storage
@@ -3865,7 +3896,7 @@ io.on('connection', (socket) => {
         break;
       }
 
-      // فك الإسكات الكتابي (Unmute Text)
+      // فك الإ��كات الكتابي (Unmute Text)
       case 'unmuteText': {
         if (target) {
           target.isTextMuted = false;
@@ -4165,7 +4196,7 @@ io.on('connection', (socket) => {
         break;
       }
 
-      // نقل العضو لغرفة أخرى
+      // نقل الع��و لغرفة أخرى
       case 'moveRoom': {
         if (target && value) {
           const oldRoom = target.room;
