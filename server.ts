@@ -73,6 +73,13 @@ if (!fs.existsSync(uploadsDir)) {
 }
 app.use('/uploads', express.static(uploadsDir, { maxAge: '7d', etag: true }));
 
+function toPublicMediaUrl(url: string, req: express.Request): string {
+  if (!url || /^https?:\/\//i.test(url)) return url;
+  const configuredOrigin = process.env.PUBLIC_SERVER_URL || process.env.SERVER_PUBLIC_URL || process.env.STORAGE_PUBLIC_URL_PREFIX;
+  const origin = (configuredOrigin || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '');
+  return `${origin}${url.startsWith('/') ? url : `/${url}`}`;
+}
+
 // Storage & Database Health / Status Endpoint
 app.get('/api/system/storage-status', (_req, res) => {
   res.json({
@@ -98,7 +105,7 @@ app.post('/api/upload-media-binary', async (req, res) => {
 
     return res.json({
       success: uploadResult.success,
-      url: uploadResult.url,
+      url: toPublicMediaUrl(uploadResult.url, req),
       mediaType: uploadResult.mediaType,
       size: uploadResult.size,
       filename: uploadResult.filename,
@@ -2200,10 +2207,9 @@ io.on('connection', (socket) => {
       saveMembers();
     }
 
-        io.emit('userStyleUpdated', {
-          username: user.username,
-          avatarUrl: avatarUrl !== undefined ? avatarUrl : user.avatarUrl,
-          nameColor: user.nameColor,
+    io.emit('userStyleUpdated', {
+      username: user.username,
+      nameColor: user.nameColor,
           textColor: user.textColor,
           nameGradient: user.nameGradient,
           profileBg: user.profileBg
@@ -4348,6 +4354,7 @@ io.on('connection', (socket) => {
       username,
       statusQuote,
       avatarUrl,
+      nameBannerUrl,
       password,
       flag,
       nameColor,
@@ -4356,6 +4363,7 @@ io.on('connection', (socket) => {
       username?: string;
       statusQuote?: string;
       avatarUrl?: string;
+      nameBannerUrl?: string;
       password?: string;
       flag?: string;
       nameColor?: string;
@@ -4383,6 +4391,7 @@ io.on('connection', (socket) => {
       // user.flag is preserved from real country IP detection
       if (statusQuote !== undefined) user.statusQuote = sanitizeText(statusQuote);
       if (avatarUrl !== undefined) user.avatarUrl = avatarUrl;
+      if (nameBannerUrl !== undefined) user.nameBannerUrl = nameBannerUrl.trim() || undefined;
       if (nameColor !== undefined) user.nameColor = nameColor;
       if (textColor !== undefined) user.textColor = textColor;
 
@@ -4394,6 +4403,7 @@ io.on('connection', (socket) => {
           flag: user.flag,
           statusQuote: user.statusQuote,
           avatarUrl: user.avatarUrl,
+          nameBannerUrl: user.nameBannerUrl,
           likes: user.likes || 0,
           points: user.points || 100,
           nameColor: user.nameColor,
@@ -4403,6 +4413,7 @@ io.on('connection', (socket) => {
         if (password) registeredMembers[user.username].password = hashPassword(password);
         registeredMembers[user.username].statusQuote = user.statusQuote;
         if (avatarUrl !== undefined) registeredMembers[user.username].avatarUrl = avatarUrl;
+        if (nameBannerUrl !== undefined) registeredMembers[user.username].nameBannerUrl = user.nameBannerUrl;
         if (user.flag) registeredMembers[user.username].flag = user.flag;
         if (nameColor !== undefined) (registeredMembers[user.username] as any).nameColor = nameColor;
         if (textColor !== undefined) (registeredMembers[user.username] as any).textColor = textColor;
@@ -4411,6 +4422,8 @@ io.on('connection', (socket) => {
 
       io.emit('userStyleUpdated', {
         username: user.username,
+        avatarUrl: user.avatarUrl,
+        nameBannerUrl: user.nameBannerUrl,
         nameColor: user.nameColor,
         textColor: user.textColor,
         nameGradient: user.nameGradient,
