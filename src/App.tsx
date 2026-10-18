@@ -3761,7 +3761,7 @@ export default function App() {
       setIsSubmitting(false);
     });
 
-    const defaultQuote = activeTab === 'visitor' ? 'زائر' : 'عضو جدي��';
+    const defaultQuote = activeTab === 'visitor' ? 'زائر' : 'عضو جديد';
     const clientFingerprint = generateDeviceFingerprint().fingerprintId;
 
     socket.emit('joinRoom', {
@@ -4058,7 +4058,7 @@ export default function App() {
     const lastTime = userLikeCooldownsRef.current[targetUsername] || 0;
     if (now - lastTime < 60000) {
       const remainingSec = Math.ceil((60000 - (now - lastTime)) / 1000);
-      showToast(`⏳ يمكنك إعطاء لايك له��ا العضو مرة واحدة كل دقيقة (متبقي ${remainingSec} ثانية)`, 'info');
+      showToast(`⏳ يمكنك إعطاء لايك لهذا العضو مرة واحدة كل دقيقة (متبقي ${remainingSec} ثانية)`, 'info');
       return;
     }
     userLikeCooldownsRef.current[targetUsername] = now;
@@ -5176,7 +5176,7 @@ export default function App() {
                   </span>
                 </div>
                 <span className="text-[11px] text-emerald-600 font-bold">
-                  ✓ الدخول التلقائي: ا��غرفة العامة
+                  ✓ الدخول التلقائي: الغرفة العامة
                 </span>
               </div>
             </form>
@@ -5539,7 +5539,7 @@ export default function App() {
                       const next = !soundsMuted;
                       setSoundsMuted(next);
                       sounds.setMuted(next);
-                      showToast(next ? 'تم كتم جميع التنبيها�� 🔇' : 'تم تفعيل جميع الأصوات 🔔', 'info');
+                      showToast(next ? 'تم كتم جميع التنبيهات 🔇' : 'تم تفعيل جميع الأصوات 🔔', 'info');
                     }}
                     className={`px-3 py-1 rounded-full font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs ${
                       soundsMuted ? 'bg-rose-600 text-white hover:bg-rose-700' : 'bg-emerald-600 text-white hover:bg-emerald-700'
@@ -5784,7 +5784,7 @@ export default function App() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 font-black text-xs text-amber-950">
                     <BellRing className="w-4 h-4 text-amber-600 animate-pulse" />
-                    <span>تنبيهات ��لمتصفح بالخلفية (Web Notifications API)</span>
+                    <span>تنبيهات للمتصفح بالخلفية (Web Notifications API)</span>
                   </div>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                     notificationPermission === 'granted'
@@ -7245,10 +7245,10 @@ export default function App() {
                   type="button"
                   onClick={() => {
                     setIsWatchingLive(false);
-                    socket?.emit('leaveLiveViewer', { room: currentUser.room || 'الغ��فة العامة' });
+                    socket?.emit('leaveLiveViewer', { room: currentUser.room || 'الغرفة العامة' });
                   }}
                   className="w-7 h-7 rounded-lg bg-black/40 hover:bg-black/60 text-white flex items-center justify-center cursor-pointer transition-colors"
-                  title="إغلا�� شاشة البث"
+                  title="إغلاق شاشة البث"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -9285,7 +9285,7 @@ export default function App() {
               <div className="flex items-center justify-between text-[11px] font-bold text-slate-800">
                 <span className="flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
-                  <span>خواطر وح��لات الـ 24 ساعة 📸🎥</span>
+                  <span>خواطر وحالات الـ 24 ساعة 📸🎥</span>
                 </span>
                 <span className="text-[10px] text-amber-800 font-bold bg-amber-100/90 px-2 py-0.2 rounded-full border border-amber-300">
                   حذف تلقائي بعد 24 ساعة
@@ -10752,7 +10752,7 @@ export default function App() {
         )}
 
         {/* 5. CONTROL & PERMISSIONS PANEL / لوحة التحكم والصلاحيات (Screenshot 8 & Admin Suite) */}
-        {/* 5. CONTROL & PERMISSIONS PANEL / لوحة التحك�� والصلاحيات الشاملة */}
+        {/* 5. CONTROL & PERMISSIONS PANEL / لوحة التحكم والصلاحيات الشاملة */}
         {activeDrawer === "monitor" && currentUser && (
           <div className="absolute inset-y-0 right-0 w-[92%] sm:w-[86%] max-w-xl bg-[#17110c] z-40 shadow-2xl border-l border-[#4d3722] flex flex-col animate-in slide-in-from-right duration-200 text-right">
             <AdminControlSuite
@@ -11137,7 +11137,7 @@ export default function App() {
                   <div className="flex items-center justify-between text-[11px] font-bold text-amber-950">
                     <span className="flex items-center gap-1">
                       <span>📢</span>
-                      <span>نغمة ال��شعار والتنبيه العام:</span>
+                      <span>نغمة الإشعار والتنبيه العام:</span>
                     </span>
                     <button
                       type="button"
@@ -11383,7 +11383,7 @@ export default function App() {
                 </div>
                 {/* Switcher to test all roles */}
                 <div className="pt-1.5 border-t border-amber-200/60">
-                  <div className="text-[10px] font-bold text-amber-900 mb-1">تبديل الرتبة ل��اختبار والتجربة الفورية:</div>
+                  <div className="text-[10px] font-bold text-amber-900 mb-1">تبديل الرتبة للاختبار والتجربة الفورية:</div>
                   <div className="grid grid-cols-3 gap-1">
                     <button
                       type="button"
@@ -11627,7 +11627,7 @@ export default function App() {
                     className="w-full py-2.5 px-3 bg-gradient-to-r from-rose-500 via-pink-600 to-rose-500 hover:from-rose-600 hover:to-pink-700 text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 group"
                   >
                     <Heart className="w-4 h-4 fill-white animate-pulse group-hover:scale-125 transition-transform" />
-                    <span>إعجاب بالم��ف الشخصي ❤️ (+1 لايك • مرة بالدقيقة)</span>
+                    <span>إعجاب بالملف الشخصي ❤️ (+1 لايك • مرة بالدقيقة)</span>
                   </button>
                 </div>
               )}
@@ -13119,7 +13119,7 @@ export default function App() {
                                   openUserProfile(visitorUser);
                                   setShowProfileVisitorsModal(false);
                                 } else {
-                                  showToast(`العضو [${v.username}] غير متصل حا��ياً`, 'info');
+                                  showToast(`العضو [${v.username}] غير متصل حالياً`, 'info');
                                 }
                               }}
                               className="px-2 py-0.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-[10px] font-bold cursor-pointer transition-colors"
@@ -13259,7 +13259,7 @@ export default function App() {
                     className="w-full py-3 bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:to-rose-600 text-white font-black rounded-xl shadow-lg cursor-pointer transition-all flex items-center justify-center gap-2 text-sm animate-pulse active:scale-[0.98]"
                   >
                     <Video className="w-4 h-4" />
-                    <span>ابدأ الب�� المباشر الآن 🔴</span>
+                    <span>ابدأ البث المباشر الآن 🔴</span>
                   </button>
                   <button
                     type="button"
@@ -13398,7 +13398,7 @@ export default function App() {
                                     : 'bg-amber-500 hover:bg-amber-400 text-black shadow'
                                 }`}
                               >
-                                {isCurrentlySelected ? 'مثبت حالياً ✔️' : 'تثبيت كا��م العضو 📌'}
+                                {isCurrentlySelected ? 'مثبت حالياً ✔️' : 'تثبيت كائم العضو 📌'}
                               </button>
                             </div>
                             {/* Standard 500x50 preview box */}
@@ -13505,7 +13505,7 @@ export default function App() {
               <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                 <div className="font-bold text-sm text-amber-300 flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-amber-400" />
-                  <span>نشر خ��طرة / حالة جديدة (24 ساعة)</span>
+                  <span>نشر خاطرة / حالة جديدة (24 ساعة)</span>
                 </div>
                 <button
                   type="button"

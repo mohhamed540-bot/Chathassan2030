@@ -518,7 +518,7 @@ function canPerformModeration(
 
   // 2. Action-specific constraints (Admin Only powers)
   if (action === 'ban' && actor.role !== 'admin') {
-    return { allowed: false, reason: 'صلاحية الباند والحظر الدائ�� محصورة بمدير النظام (Admin) فقط.' };
+    return { allowed: false, reason: 'صلاحية الباند والحظر الدائم محصورة بمدير النظام (Admin) فقط.' };
   }
 
   if (action === 'updateLikes' && actor.role !== 'admin') {
@@ -1245,7 +1245,7 @@ let staffMemos: StaffMemo[] = [
     id: 'memo-2',
     author: '★ ﺟﻨﺘﻞ ★',
     role: 'admin',
-    text: 'تم حظر مستخدم كان يكرر نشر روابط إعلا��ات مخالفة على الخاص والتأكد من هدوء الغرف.',
+    text: 'تم حظر مستخدم كان يكرر نشر روابط إعلانات مخالفة على الخاص والتأكد من هدوء الغرف.',
     priority: 'normal',
     timestamp: Date.now() - 7200000,
     timeFormatted: 'اليوم 06:15 م'
@@ -2214,7 +2214,7 @@ io.on('connection', (socket) => {
   socket.on('updateGlobalAppearance', ({ theme, fontFamily, wallpaper, bubbleStyle, bannerUrl, logoUrl }: Partial<GlobalAppearance>) => {
     const admin = users.find((u) => u.id === socket.id);
     if (!admin || (admin.role !== 'admin' && admin.role !== 'super')) {
-      socket.emit('systemAlert', 'تعميم الثيم والخط ��لعام محصور بطاقم الإدارة.');
+      socket.emit('systemAlert', 'تعميم الثيم والخط للعام محصور بطاقم الإدارة.');
       return;
     }
     if (theme) globalAppearance.theme = theme;
@@ -3410,7 +3410,7 @@ io.on('connection', (socket) => {
     // Likes Requirement Check for Room Messages
     if (user.role !== 'admin' && user.role !== 'super') {
       if (cleanMsg && likesSettings.roomTextLikes > 0 && user.likes < likesSettings.roomTextLikes) {
-        socket.emit('systemAlert', `عفواً، يتطلب إرسال النص في الغرف�� ${likesSettings.roomTextLikes} لايك على الأقل. رصيدك الحالي: ${user.likes} 👍`);
+        socket.emit('systemAlert', `عفواً، يتطلب إرسال النص في الغرف ${likesSettings.roomTextLikes} لايك على الأقل. رصيدك الحالي: ${user.likes} 👍`);
         return;
       }
       if ((mediaUrl || voiceNote) && likesSettings.roomMediaLikes > 0 && user.likes < likesSettings.roomMediaLikes) {
@@ -3552,7 +3552,7 @@ io.on('connection', (socket) => {
 
     const roomSettings = getRoomSettings(user.room);
     if (roomSettings.isVoiceLocked && user.role !== 'admin' && user.role !== 'super') {
-      socket.emit('micError', 'المايكات مقفلة ومحصورة حالياً على الإدارة والمشرفين فق��.');
+      socket.emit('micError', 'المايكات مقفلة ومحصورة حالياً على الإدارة والمشرفين فقط.');
       return;
     }
 
@@ -3916,7 +3916,7 @@ io.on('connection', (socket) => {
         settings.isChatLocked = Boolean(value);
         io.to(room).emit('roomSettingsUpdated', { room, settings });
         logMonitorEvent('role', `${settings.isChatLocked ? 'قفل' : 'فتح'} الشات العام في [${room}] بواسطة ${admin.username}`, admin.username);
-        io.to(room).emit('systemAlert', settings.isChatLocked ? '🔒 تم قفل الشات العام ��ؤقتاً بقرار إداري.' : '🔓 تم فتح الشات العام للجميع.');
+        io.to(room).emit('systemAlert', settings.isChatLocked ? '🔒 تم قفل الشات العام مؤقتاً بقرار إداري.' : '🔓 تم فتح الشات العام للجميع.');
         break;
       }
 
@@ -4329,7 +4329,7 @@ io.on('connection', (socket) => {
         }
         io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
         logMonitorEvent('role', `منح/تعديل الوسام الشرفي لـ ${uName} [${badgeText || 'إزالة'}] بواسطة ${admin.username}`, admin.username, uName);
-        socket.emit('systemAlert', `��م تحديث الوسام الشرفي لـ ${uName} بنجاح.`);
+        socket.emit('systemAlert', `تم تحديث الوسام الشرفي لـ ${uName} بنجاح.`);
         break;
       }
 
@@ -4361,7 +4361,7 @@ io.on('connection', (socket) => {
               }
             }
             io.emit('roomsUpdated', chatRooms);
-            logMonitorEvent('room', `��عديل إعدادات وبيانات الغرفة [${room.id}] بواسطة ${admin.username}`, admin.username);
+            logMonitorEvent('room', `تعديل إعدادات وبيانات الغرفة [${room.id}] بواسطة ${admin.username}`, admin.username);
             socket.emit('systemAlert', `تم تعديل بيانات وإعدادات الغرفة [${room.id}] بنجاح.`);
           }
         }
@@ -4437,7 +4437,7 @@ io.on('connection', (socket) => {
         }
       }
 
-      // العلم الحقيقي م��تشف تلقائياً عند الدخول ومقفل لمنع اختيار أعلام وهمية
+      // العلم الحقيقي مشفر تلقائياً عند الدخول ومقفل لمنع اختيار أعلام وهمية
       // user.flag is preserved from real country IP detection
       if (statusQuote !== undefined) user.statusQuote = sanitizeText(statusQuote);
       if (avatarUrl !== undefined) user.avatarUrl = avatarUrl;
@@ -4902,7 +4902,7 @@ io.on('connection', (socket) => {
   socket.on('pinRoomMessage', ({ messageId, unpin }: { messageId?: string; unpin?: boolean }) => {
     const user = users.find((u) => u.id === socket.id);
     if (!user || (user.role !== 'admin' && user.role !== 'super')) {
-      socket.emit('systemAlert', 'تث��يت الرسائل محصور بالإشراف والإدارة.');
+      socket.emit('systemAlert', 'تثبيت الرسائل محصور بالإشراف والإدارة.');
       return;
     }
     if (unpin) {
@@ -4966,7 +4966,7 @@ io.on('connection', (socket) => {
     const winMsg: StoredMessage = {
       id: `gamewin-${Date.now()}`,
       room: user.room,
-      username: 'نظام الجوائ�� والمسابقات 🏆',
+      username: 'نظام الجوائز والمسابقات 🏆',
       badge: 'فوز مستحق',
       badgeColor: 'text-amber-500',
       text: `🎉 كفو! حقق الصقر [${user.username}] فوزاً في (${gameName}) وحصد [${pointsWon} نقطة] إضافية!`,
@@ -5576,7 +5576,7 @@ io.on('connection', (socket) => {
           io.to(user.room).emit('micSlotsUpdated', slots);
         }
 
-        logMonitorEvent('leave', `سجل ${user.username} خروجاً رسم��اً من الدردشة`, user.username);
+        logMonitorEvent('leave', `سجل ${user.username} خروجاً رسمياً من الدردشة`, user.username);
 
         if (user.isVoice) {
           io.to(user.room).emit('userLeftVoice', { userId: socket.id, username: user.username });
