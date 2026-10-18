@@ -1941,12 +1941,16 @@ io.on('connection', (socket) => {
         if (value.startsWith('data:')) {
           const match = value.match(/^data:([^;]+);base64,(.+)$/);
           if (match) {
-            const uploaded = await storageManager.saveBuffer(
-              Buffer.from(match[2], 'base64'),
-              filename,
-              match[1],
-              'falcon-assets'
-            );
+            const rawBuffer = Buffer.from(match[2], 'base64');
+
+            // Railway's local filesystem is ephemeral. If no external media store is
+            // configured, keep the small branding asset in MongoDB as a data URL so
+            // every instance and every device can load the same image after restart.
+            if (!storageManager.isExternal()) {
+              return value;
+            }
+
+            const uploaded = await storageManager.saveBuffer(rawBuffer, filename, match[1], 'falcon-assets');
             const configuredOrigin = process.env.PUBLIC_SERVER_URL || process.env.SERVER_PUBLIC_URL || process.env.STORAGE_PUBLIC_URL_PREFIX;
             const socketOrigin = configuredOrigin || `https://${socket.handshake.headers.host || 'localhost'}`;
             return /^https?:\/\//i.test(uploaded.url)
@@ -4417,7 +4421,7 @@ io.on('connection', (socket) => {
         }
       }
 
-      // العلم الحقيقي مكتشف تلقائياً عند الدخول ومقفل لمنع اختيار أعلام وهمية
+      // العلم الحقيقي م��تشف تلقائياً عند الدخول ومقفل لمنع اختيار أعلام وهمية
       // user.flag is preserved from real country IP detection
       if (statusQuote !== undefined) user.statusQuote = sanitizeText(statusQuote);
       if (avatarUrl !== undefined) user.avatarUrl = avatarUrl;
@@ -5556,7 +5560,7 @@ io.on('connection', (socket) => {
           io.to(user.room).emit('micSlotsUpdated', slots);
         }
 
-        logMonitorEvent('leave', `سجل ${user.username} خروجاً رسمياً من الدردشة`, user.username);
+        logMonitorEvent('leave', `سجل ${user.username} خروجاً رسم��اً من الدردشة`, user.username);
 
         if (user.isVoice) {
           io.to(user.room).emit('userLeftVoice', { userId: socket.id, username: user.username });
