@@ -1922,7 +1922,7 @@ io.on('connection', (socket) => {
   // تحديث بنر الشات falcon_chat_banner وأيقونة الصقر falcon_avatar_icon
   socket.on(
     'updateFalconAssets',
-    ({
+    async ({
       falconChatBanner,
       falconAvatarIcon
     }: {
@@ -1935,14 +1935,44 @@ io.on('connection', (socket) => {
         return;
       }
 
+      // Persist uploaded assets on the backend/storage provider, never as browser-only data URLs.
+      const persistFalconAsset = async (value: string | undefined, fallback: string, filename: string) => {
+        if (!value) return fallback;
+        if (value.startsWith('data:')) {
+          const match = value.match(/^data:([^;]+);base64,(.+)$/);
+          if (match) {
+            const uploaded = await storageManager.saveBuffer(
+              Buffer.from(match[2], 'base64'),
+              filename,
+              match[1],
+              'falcon-assets'
+            );
+            const configuredOrigin = process.env.PUBLIC_SERVER_URL || process.env.SERVER_PUBLIC_URL || process.env.STORAGE_PUBLIC_URL_PREFIX;
+            const socketOrigin = configuredOrigin || `https://${socket.handshake.headers.host || 'localhost'}`;
+            return /^https?:\/\//i.test(uploaded.url)
+              ? uploaded.url
+              : `${socketOrigin.replace(/\/$/, '')}${uploaded.url.startsWith('/') ? uploaded.url : `/${uploaded.url}`}`;
+          }
+        }
+        return value;
+      };
+
       let changed = false;
       if (falconChatBanner !== undefined) {
-        emblemsConfig.falconChatBanner = falconChatBanner || DEFAULT_FALCON_CHAT_BANNER;
+        emblemsConfig.falconChatBanner = await persistFalconAsset(
+          falconChatBanner,
+          DEFAULT_FALCON_CHAT_BANNER,
+          'falcon-chat-banner.png'
+        );
         globalAppearance.bannerUrl = emblemsConfig.falconChatBanner;
         changed = true;
       }
       if (falconAvatarIcon !== undefined) {
-        emblemsConfig.falconAvatarIcon = falconAvatarIcon || DEFAULT_FALCON_AVATAR_ICON;
+        emblemsConfig.falconAvatarIcon = await persistFalconAsset(
+          falconAvatarIcon,
+          DEFAULT_FALCON_AVATAR_ICON,
+          'falcon-avatar-icon.png'
+        );
         globalAppearance.logoUrl = emblemsConfig.falconAvatarIcon;
         changed = true;
       }
@@ -4311,7 +4341,7 @@ io.on('connection', (socket) => {
               }
             }
             io.emit('roomsUpdated', chatRooms);
-            logMonitorEvent('room', `تعديل إعدادات وبيانات الغرفة [${room.id}] بواسطة ${admin.username}`, admin.username);
+            logMonitorEvent('room', `��عديل إعدادات وبيانات الغرفة [${room.id}] بواسطة ${admin.username}`, admin.username);
             socket.emit('systemAlert', `تم تعديل بيانات وإعدادات الغرفة [${room.id}] بنجاح.`);
           }
         }
@@ -4916,7 +4946,7 @@ io.on('connection', (socket) => {
     const winMsg: StoredMessage = {
       id: `gamewin-${Date.now()}`,
       room: user.room,
-      username: 'نظام الجوائز والمسابقات 🏆',
+      username: 'نظام الجوائ�� والمسابقات 🏆',
       badge: 'فوز مستحق',
       badgeColor: 'text-amber-500',
       text: `🎉 كفو! حقق الصقر [${user.username}] فوزاً في (${gameName}) وحصد [${pointsWon} نقطة] إضافية!`,
