@@ -2836,14 +2836,14 @@ export default function App() {
     });
 
     // User style immediate broadcast listener
-    s.on('userStyleUpdated', (data: { userId?: string; username: string; nameColor?: string; textColor?: string; nameGradient?: string; profileBg?: string; nameBannerUrl?: string; giftBadges?: string[] }) => {
+    s.on('userStyleUpdated', (data: { userId?: string; username: string; avatarUrl?: string; nameColor?: string; textColor?: string; nameGradient?: string; profileBg?: string; nameBannerUrl?: string; giftBadges?: string[] }) => {
       const matchName = (un?: string) => un && un.toLowerCase() === data.username.toLowerCase();
 
       setRosterUsers((prev) =>
-        prev.map((u) => (matchName(u.username) ? { ...u, nameColor: data.nameColor, textColor: data.textColor, nameGradient: data.nameGradient, profileBg: data.profileBg, nameBannerUrl: data.nameBannerUrl !== undefined ? data.nameBannerUrl : u.nameBannerUrl, giftBadges: data.giftBadges !== undefined ? data.giftBadges : u.giftBadges } : u))
+        prev.map((u) => (matchName(u.username) ? { ...u, avatarUrl: data.avatarUrl !== undefined ? data.avatarUrl : u.avatarUrl, nameColor: data.nameColor, textColor: data.textColor, nameGradient: data.nameGradient, profileBg: data.profileBg, nameBannerUrl: data.nameBannerUrl !== undefined ? data.nameBannerUrl : u.nameBannerUrl, giftBadges: data.giftBadges !== undefined ? data.giftBadges : u.giftBadges } : u))
       );
       setAllConnectedUsers((prev) =>
-        prev.map((u) => (matchName(u.username) ? { ...u, nameColor: data.nameColor, textColor: data.textColor, nameGradient: data.nameGradient, profileBg: data.profileBg, nameBannerUrl: data.nameBannerUrl !== undefined ? data.nameBannerUrl : u.nameBannerUrl, giftBadges: data.giftBadges !== undefined ? data.giftBadges : u.giftBadges } : u))
+        prev.map((u) => (matchName(u.username) ? { ...u, avatarUrl: data.avatarUrl !== undefined ? data.avatarUrl : u.avatarUrl, nameColor: data.nameColor, textColor: data.textColor, nameGradient: data.nameGradient, profileBg: data.profileBg, nameBannerUrl: data.nameBannerUrl !== undefined ? data.nameBannerUrl : u.nameBannerUrl, giftBadges: data.giftBadges !== undefined ? data.giftBadges : u.giftBadges } : u))
       );
       setAllRegisteredMembers((prev) =>
         prev.map((m) => (matchName(m.username) ? { ...m, nameBannerUrl: data.nameBannerUrl !== undefined ? data.nameBannerUrl : m.nameBannerUrl } : m))
@@ -5522,7 +5522,7 @@ export default function App() {
                       const next = !soundsMuted;
                       setSoundsMuted(next);
                       sounds.setMuted(next);
-                      showToast(next ? 'تم كتم جميع التنبيهات 🔇' : 'تم تفعيل جميع الأصوات 🔔', 'info');
+                      showToast(next ? 'تم كتم جميع التنبيها�� 🔇' : 'تم تفعيل جميع الأصوات 🔔', 'info');
                     }}
                     className={`px-3 py-1 rounded-full font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs ${
                       soundsMuted ? 'bg-rose-600 text-white hover:bg-rose-700' : 'bg-emerald-600 text-white hover:bg-emerald-700'

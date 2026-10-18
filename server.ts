@@ -511,7 +511,7 @@ function canPerformModeration(
 
   // 2. Action-specific constraints (Admin Only powers)
   if (action === 'ban' && actor.role !== 'admin') {
-    return { allowed: false, reason: 'صلاحية الباند والحظر الدائم محصورة بمدير النظام (Admin) فقط.' };
+    return { allowed: false, reason: 'صلاحية الباند والحظر الدائ�� محصورة بمدير النظام (Admin) فقط.' };
   }
 
   if (action === 'updateLikes' && actor.role !== 'admin') {
@@ -1238,7 +1238,7 @@ let staffMemos: StaffMemo[] = [
     id: 'memo-2',
     author: '★ ﺟﻨﺘﻞ ★',
     role: 'admin',
-    text: 'تم حظر مستخدم كان يكرر نشر روابط إعلانات مخالفة على الخاص والتأكد من هدوء الغرف.',
+    text: 'تم حظر مستخدم كان يكرر نشر روابط إعلا��ات مخالفة على الخاص والتأكد من هدوء الغرف.',
     priority: 'normal',
     timestamp: Date.now() - 7200000,
     timeFormatted: 'اليوم 06:15 م'
@@ -2158,7 +2158,7 @@ io.on('connection', (socket) => {
   socket.on('updateGlobalAppearance', ({ theme, fontFamily, wallpaper, bubbleStyle, bannerUrl, logoUrl }: Partial<GlobalAppearance>) => {
     const admin = users.find((u) => u.id === socket.id);
     if (!admin || (admin.role !== 'admin' && admin.role !== 'super')) {
-      socket.emit('systemAlert', 'تعميم الثيم والخط العام محصور بطاقم الإدارة.');
+      socket.emit('systemAlert', 'تعميم الثيم والخط ��لعام محصور بطاقم الإدارة.');
       return;
     }
     if (theme) globalAppearance.theme = theme;
@@ -2200,13 +2200,14 @@ io.on('connection', (socket) => {
       saveMembers();
     }
 
-    io.emit('userStyleUpdated', {
-      username: user.username,
-      nameColor: user.nameColor,
-      textColor: user.textColor,
-      nameGradient: user.nameGradient,
-      profileBg: user.profileBg
-    });
+        io.emit('userStyleUpdated', {
+          username: user.username,
+          avatarUrl: avatarUrl !== undefined ? avatarUrl : user.avatarUrl,
+          nameColor: user.nameColor,
+          textColor: user.textColor,
+          nameGradient: user.nameGradient,
+          profileBg: user.profileBg
+        });
 
     if (user.room) {
       io.to(user.room).emit('roomUsers', { room: user.room, users: users.filter((u) => u.room === user.room) });
@@ -3495,7 +3496,7 @@ io.on('connection', (socket) => {
 
     const roomSettings = getRoomSettings(user.room);
     if (roomSettings.isVoiceLocked && user.role !== 'admin' && user.role !== 'super') {
-      socket.emit('micError', 'المايكات مقفلة ومحصورة حالياً على الإدارة والمشرفين فقط.');
+      socket.emit('micError', 'المايكات مقفلة ومحصورة حالياً على الإدارة والمشرفين فق��.');
       return;
     }
 
@@ -3859,7 +3860,7 @@ io.on('connection', (socket) => {
         settings.isChatLocked = Boolean(value);
         io.to(room).emit('roomSettingsUpdated', { room, settings });
         logMonitorEvent('role', `${settings.isChatLocked ? 'قفل' : 'فتح'} الشات العام في [${room}] بواسطة ${admin.username}`, admin.username);
-        io.to(room).emit('systemAlert', settings.isChatLocked ? '🔒 تم قفل الشات العام مؤقتاً بقرار إداري.' : '🔓 تم فتح الشات العام للجميع.');
+        io.to(room).emit('systemAlert', settings.isChatLocked ? '🔒 تم قفل الشات العام ��ؤقتاً بقرار إداري.' : '🔓 تم فتح الشات العام للجميع.');
         break;
       }
 
@@ -3961,6 +3962,7 @@ io.on('connection', (socket) => {
           io.to(target.id).emit('systemAlert', `تم حذف صورتك الشخصية بواسطة الإدارة (${admin.username}) لمخالفتها الآداب العامة.`);
         }
         io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
+        io.emit('userStyleUpdated', { username: uName, avatarUrl: undefined });
         logMonitorEvent('role', `حذف صورة ${uName} بواسطة [${admin.role.toUpperCase()}] ${admin.username}`, admin.username, uName);
         socket.emit('systemAlert', `تم حذف صورة ${uName} بنجاح.`);
         break;
@@ -3982,6 +3984,7 @@ io.on('connection', (socket) => {
             io.to(target.id).emit('systemAlert', `تم تحديث صورتك الشخصية بواسطة الإدارة (${admin.username}).`);
           }
           io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
+          io.emit('userStyleUpdated', { username: uName, avatarUrl: value });
           logMonitorEvent('role', `تحديث صورة ${uName} بواسطة [${admin.role.toUpperCase()}] ${admin.username}`, admin.username, uName);
           socket.emit('systemAlert', `تم تحديث صورة ${uName} بنجاح.`);
         }
