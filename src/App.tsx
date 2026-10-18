@@ -1376,6 +1376,9 @@ export default function App() {
   const [detectedFlag, setDetectedFlag] = useState<string>('🇾🇪');
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Keep the login screen hidden until the server's shared appearance has loaded.
+  // This prevents the local default banner/theme from flashing before MongoDB data arrives.
+  const [appearanceReady, setAppearanceReady] = useState(false);
   const [globalBannerUrl, setGlobalBannerUrl] = useState<string>('');
   const [falconChatBanner, setFalconChatBanner] = useState<string>(() => {
     if (typeof window !== 'undefined') {
@@ -1389,6 +1392,12 @@ export default function App() {
     }
     return DEFAULT_FALCON_AVATAR_ICON;
   });
+
+  useEffect(() => {
+    // Never block the app forever if the backend is temporarily unavailable.
+    const fallback = window.setTimeout(() => setAppearanceReady(true), 10000);
+    return () => window.clearTimeout(fallback);
+  }, []);
 
   // Chat Data & Stream (Screenshot 2)
   // Preserved in sessionStorage for this browser tab session;
@@ -2747,6 +2756,8 @@ export default function App() {
         if (ga.bubbleStyle) setBubbleStyle(ga.bubbleStyle);
         if (ga.bannerUrl) setGlobalBannerUrl(ga.bannerUrl);
       }
+      // The shared appearance has now been applied before any public screen is shown.
+      setAppearanceReady(true);
     });
 
     s.on('adminInitialData', (data: {
@@ -4916,6 +4927,17 @@ export default function App() {
   // =========================================================================
   // VIEW 1: HOME LOGIN SCREEN (Matching Screenshot 1)
   // =========================================================================
+  if (!appearanceReady) {
+    return (
+      <div className="flex h-full min-h-screen items-center justify-center bg-[#070b13] text-amber-300" dir="rtl">
+        <div className="flex flex-col items-center gap-3" role="status" aria-live="polite">
+          <img src={DEFAULT_FALCON_AVATAR_ICON} alt="" className="h-16 w-16 rounded-full object-cover" />
+          <span className="text-sm font-semibold">جارٍ تحميل إعدادات الشات...</span>
+        </div>
+      </div>
+    );
+  }
+
   if (!currentUser) {
     return (
       <div
@@ -6221,7 +6243,7 @@ export default function App() {
                     onClick={() => {
                       const isMuted = audioManager?.toggleMute() ?? false;
                       sounds.playToggleMute(isMuted);
-                      showToast(isMuted ? 'تم كتم صوت الم��يك 🔇' : 'تم تشغيل المايك 🎙️', 'info');
+                      showToast(isMuted ? 'تم كتم صوت الم����يك 🔇' : 'تم تشغيل المايك 🎙️', 'info');
                       setMicActionSlot(null);
                     }}
                     className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl flex items-center justify-center gap-2 border cursor-pointer transition-colors"
@@ -13491,7 +13513,7 @@ export default function App() {
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center text-white p-4">
             <div className="bg-slate-900 border border-amber-500/60 p-5 rounded-2xl max-w-xs w-full text-center space-y-3 shadow-2xl">
               <Sparkles className="w-8 h-8 text-amber-400 mx-auto animate-spin" />
-              <div className="font-bold text-sm text-amber-300">جاري رفع ونشر الخاطرة / الحالة...</div>
+              <div className="font-bold text-sm text-amber-300">جاري رفع ونشر ال��اطرة / الحالة...</div>
               <div className="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden border border-slate-700">
                 <div
                   className="bg-gradient-to-r from-amber-500 to-yellow-400 h-full transition-all duration-200"
