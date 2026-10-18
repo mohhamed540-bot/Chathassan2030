@@ -2752,7 +2752,15 @@ export default function App() {
         if (ga.fontFamily) setFontFamily(ga.fontFamily);
         if (ga.wallpaper) setActiveWallpaper(ga.wallpaper);
         if (ga.bubbleStyle) setBubbleStyle(ga.bubbleStyle);
-        if (ga.bannerUrl) setGlobalBannerUrl(ga.bannerUrl);
+        // The shared appearance is authoritative. Keep both branding state values
+        // aligned so a cached local banner cannot win the first render.
+        if (ga.bannerUrl) {
+          setGlobalBannerUrl(ga.bannerUrl);
+          setFalconChatBanner(ga.bannerUrl);
+        }
+        if (ga.logoUrl) {
+          setFalconAvatarIcon(ga.logoUrl);
+        }
       }
       // The shared appearance has now been applied before any public screen is shown.
       setAppearanceReady(true);
@@ -4929,7 +4937,7 @@ export default function App() {
     return (
       <div className="flex h-full min-h-screen items-center justify-center bg-[#070b13] text-amber-300" dir="rtl">
         <div className="flex flex-col items-center gap-3" role="status" aria-live="polite">
-          <img src={DEFAULT_FALCON_AVATAR_ICON} alt="" className="h-16 w-16 rounded-full object-cover" />
+          <div className="h-16 w-16 rounded-full border-2 border-amber-400/50 bg-slate-900/80 shadow-lg" aria-hidden="true" />
           <span className="text-sm font-semibold">جارٍ تحميل إعدادات الشات...</span>
         </div>
       </div>
@@ -10751,7 +10759,7 @@ export default function App() {
                             <span>رسائل ذاتية الاختفاء (Self-destructing):</span>
                           </div>
                           <p className="text-[11px] text-slate-300 leading-relaxed">
-                            يمكنك تفعيل مؤقت التدمير الذاتي للرسائل والصور والتسجيلات الصوتية في أي وقت من زر اللهب 🔥، ليتم مسح الرسالة تماماً من جهازك وجهاز الطرف الآخر بمجرد انتهاء المؤقت.
+                            يمكنك تفعيل مؤقت الت��مير الذاتي للرسائل والصور والتسجيلات الصوتية في أي وقت من زر اللهب 🔥، ليتم مسح الرسالة تماماً من جهازك وجهاز الطرف الآخر بمجرد انتهاء المؤقت.
                           </p>
                         </div>
 
@@ -11320,7 +11328,7 @@ export default function App() {
                       setSelectedJoinSound(sId);
                       sounds.setJoinSound(sId);
                       sounds.previewJoinSound(sId);
-                      showToast('تم حفظ نغمة دخول الأعضاء ����', 'success');
+                      showToast('��م حفظ نغمة دخول الأعضاء ����', 'success');
                     }}
                     className="w-full p-2 border border-slate-300 rounded-lg text-xs bg-white text-slate-800 font-semibold outline-none focus:border-amber-600"
                   >
@@ -12967,7 +12975,7 @@ export default function App() {
                   />
                 </div>
 
-                {/* Room Welcome Message Section (الرسالة الترحيبية للغرفة لمالك الغرفة) */}
+                {/* Room Welcome Message Section (الرسالة الترح��بية للغرفة لمالك الغرفة) */}
                 <div className="p-3 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-amber-950/40 border border-emerald-500/40 rounded-xl space-y-2">
                   <div className="flex items-center justify-between">
                     <div>
@@ -13242,7 +13250,7 @@ export default function App() {
                     <span>الغرفة المستهدفة: [{currentUser?.room || 'الغرفة العامة'}]</span>
                   </div>
                   <p className="text-[11px] text-slate-300 leading-relaxed">
-                    سيتم فتح الكاميرا والمايكروفون وبث الفيديو بجودة عالية لجميع المتواجدين في الغرفة، مع إمكانية التفاعل بالرموز التعبيرية والتعليقات الحية!
+                    سيتم فتح الكاميرا والمايكروفون ��بث الفيديو بجودة عالية لجميع المتواجدين في الغرفة، مع إمكانية التفاعل بالرموز التعبيرية والتعليقات الحية!
                   </p>
                 </div>
 
