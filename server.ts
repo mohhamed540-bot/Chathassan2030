@@ -3455,7 +3455,7 @@ io.on('connection', (socket) => {
       const elapsed = (Date.now() - lastSent) / 1000;
       if (elapsed < roomSettings.slowModeSeconds) {
         const remaining = Math.ceil(roomSettings.slowModeSeconds - elapsed);
-        socket.emit('systemAlert', `وضع الدردشة البطيء مفعل: يرجى الانتظار ${remaining} ثواني قبل إرسال رسالتك القادم��.`);
+        socket.emit('systemAlert', `وضع الدردشة البطيء مفعل: يرجى الانتظار ${remaining} ثواني قبل إرسال رسالتك القادمة.`);
         return;
       }
       userLastMessageTime[socket.id] = Date.now();
@@ -3871,7 +3871,7 @@ io.on('connection', (socket) => {
         // 3. Disconnect all live users from this IP or username
         const liveToKick = users.filter((u) => u.username.toLowerCase() === uName.toLowerCase() || (targetIp && u.ipAddress === targetIp));
         liveToKick.forEach((kUser) => {
-          io.to(kUser.id).emit('kickedByAdmin', { reason: `تم حظرك نهائياً وحظر عنوان الـ IP من دخول حسان برو بقرار إداري (${banReason}).`, by: admin.username });
+          io.to(kUser.id).emit('kickedByAdmin', { reason: `تم حظراً نهائياً وحظر عنوان الـ IP من دخول حسان برو بقرار إداري (${banReason}).`, by: admin.username });
           if (kUser.micSlot !== null) {
             const slots = getMicSlotsForRoom(kUser.room);
             const slot = slots.find((s) => s.slotNumber === kUser.micSlot);

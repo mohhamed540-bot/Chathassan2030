@@ -1460,7 +1460,7 @@ export default function App() {
     }
   };
 
-  // Auto prune stale typing indicators every 1s (مسح أي مؤشر ��تابة قديم تلقائياً بعد 4 ثوانٍ)
+  // Auto prune stale typing indicators every 1s (مسح أي مؤشر كتابة قديم تلقائياً بعد 4 ثوانٍ)
   useEffect(() => {
     if (typingUsers.length === 0) return;
     const interval = setInterval(() => {
@@ -1748,7 +1748,7 @@ export default function App() {
   ]);
   const [newFilterWordInput, setNewFilterWordInput] = useState('');
 
-  // Live Broadcast Video & Audio (بث لايف ��يديو وصوت حقيقي للغرفة)
+  // Live Broadcast Video & Audio (بث لايف فيديو وصوت حقيقي للغرفة)
   const [isBroadcastingLive, setIsBroadcastingLive] = useState(false);
   const [isWatchingLive, setIsWatchingLive] = useState(false);
   const [activeRoomLiveBroadcast, setActiveRoomLiveBroadcast] = useState<RoomLiveBroadcastState | null>(null);
@@ -4977,7 +4977,7 @@ export default function App() {
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>سياسة الحماية والجلسة الواحدة:</span>
                 </div>
-                <div>• لا يُسمح بتواجد نفس العضو في أكثر من صفحة أو جهاز معاً.</div>
+                <div>⚠ لا يُسمح بتواجد نفس العضو في أكثر من صفحة أو جهاز معاً.</div>
                 <div>• إذا أردت استخدام هذا الجهاز مجدداً، يمكنك تسجيل الدخول وسيتم اعتماد هذه الجلسة وطرد الأخرى تلقائياً.</div>
               </div>
               <div className="flex flex-col gap-2 pt-1">
@@ -8935,7 +8935,7 @@ export default function App() {
           </div>
         )}
 
-        {/* 2. USERS DRAWER (Screenshot 1: المتواجدين) */}
+        {/* 2. USERS DRAWER (Screenshot 1: المتواجدون) */}
         {activeDrawer === 'users' && (
           <div className={`absolute inset-y-0 right-0 w-[84%] ${curTheme.drawerBg} text-slate-100 z-40 shadow-2xl border-l ${curTheme.cardBorder} flex flex-col animate-in slide-in-from-right duration-200`}>
             <div className={`${curTheme.drawerHeaderBg || curTheme.headerBg} ${curTheme.accentText} p-2.5 flex items-center justify-between border-b ${curTheme.headerBorder}`}>

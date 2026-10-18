@@ -66,6 +66,10 @@ export function getStorageConfigFromEnv(): StorageConfig {
     };
   }
 
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('No persistent media storage configured. Set STORAGE_ENDPOINT before starting production.');
+  }
+
   return {
     provider: 'local',
     localUploadsDir: rootUploadsDir

@@ -52,6 +52,10 @@ export function getDatabaseConfigFromEnv(): DatabaseConfig {
       localFallbackDir: rootDir
     };
   }
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('No persistent database configured. Set MONGODB_URI or CLOUD_REST_URL before starting production.');
+  }
+
   return {
     driverType: 'local_json',
     localFallbackDir: rootDir
