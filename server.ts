@@ -1884,7 +1884,7 @@ io.on('connection', (socket) => {
     socket.emit('emblemsUpdated', emblemsConfig);
   });
 
-  socket.on('addEmblem', ({
+  socket.on('addEmblem', async ({
     type,
     title,
     imageUrl,
@@ -1941,7 +1941,13 @@ io.on('connection', (socket) => {
     };
 
     emblemsConfig.items.unshift(newItem);
-    saveEmblems();
+    try {
+      await saveEmblems();
+    } catch {
+      emblemsConfig.items.shift();
+      socket.emit('systemAlert', 'تعذر حفظ الرمز في قاعدة البيانات. لم يتم اعتماد التغيير.');
+      return;
+    }
     io.emit('emblemsUpdated', emblemsConfig);
     logMonitorEvent(
       'security',
@@ -1951,31 +1957,44 @@ io.on('connection', (socket) => {
     socket.emit('systemAlert', `تمت إضافة ${type === 'emoji' ? `الفيس بنجاح بالكود التلقائي (${shortcut})` : 'الرمز بنجاح'} ✅`);
   });
 
-  socket.on('deleteEmblem', ({ id }: { id: string }) => {
+  socket.on('deleteEmblem', async ({ id }: { id: string }) => {
     const admin = users.find((u) => u.id === socket.id);
     if (!admin || (admin.role !== 'admin' && admin.role !== 'super')) {
       socket.emit('systemAlert', 'حذف الرموز محصور بطاقم الإدارة.');
       return;
     }
-    const prevLen = emblemsConfig.items.length;
-    emblemsConfig.items = emblemsConfig.items.filter((item) => item.id !== id);
-    if (emblemsConfig.items.length !== prevLen) {
-      saveEmblems();
+    const previousItems = emblemsConfig.items;
+    emblemsConfig.items = previousItems.filter((item) => item.id !== id);
+    if (emblemsConfig.items.length !== previousItems.length) {
+      try {
+        await saveEmblems();
+      } catch {
+        emblemsConfig.items = previousItems;
+        socket.emit('systemAlert', 'تعذر حفظ حذف الرمز في قاعدة البيانات.');
+        return;
+      }
       io.emit('emblemsUpdated', emblemsConfig);
       logMonitorEvent('security', `حذف رمز بواسطة [${admin.username}]`, admin.username);
       socket.emit('systemAlert', 'تم حذف الرمز بنجاح 🗑️');
     }
   });
 
-  socket.on('updateEmblemEmojiSize', ({ emojiSize }: { emojiSize: EmojiSizeSetting }) => {
+  socket.on('updateEmblemEmojiSize', async ({ emojiSize }: { emojiSize: EmojiSizeSetting }) => {
     const admin = users.find((u) => u.id === socket.id);
     if (!admin || (admin.role !== 'admin' && admin.role !== 'super')) {
       socket.emit('systemAlert', 'تعديل حجم الفيسات محصور بالإدارة.');
       return;
     }
     if (['small', 'default', 'large'].includes(emojiSize)) {
+      const previousEmojiSize = emblemsConfig.emojiSize;
       emblemsConfig.emojiSize = emojiSize;
-      saveEmblems();
+      try {
+        await saveEmblems();
+      } catch {
+        emblemsConfig.emojiSize = previousEmojiSize;
+        socket.emit('systemAlert', 'تعذر حفظ حجم الرموز في قاعدة البيانات.');
+        return;
+      }
       io.emit('emblemsUpdated', emblemsConfig);
       logMonitorEvent('security', `تعديل حجم عرض الفيسات إلى [${emojiSize}] بواسطة [${admin.username}]`, admin.username);
       socket.emit('systemAlert', `تم ضبط حجم الفيسات الافتراضي إلى (${emojiSize === 'small' ? 'صغير' : emojiSize === 'large' ? 'كبير' : 'افتراضي'}) بنجاح 📏`);
@@ -3455,7 +3474,7 @@ io.on('connection', (socket) => {
       const elapsed = (Date.now() - lastSent) / 1000;
       if (elapsed < roomSettings.slowModeSeconds) {
         const remaining = Math.ceil(roomSettings.slowModeSeconds - elapsed);
-        socket.emit('systemAlert', `وضع الدردشة البطيء مفعل: يرجى الانتظار ${remaining} ثواني قبل إرسال رسالتك القادم��.`);
+        socket.emit('systemAlert', `وضع الدردشة البطيء مفعل: يرجى الانتظار ${remaining} ثواني قبل إرسال رسالتك القادمة.`);
         return;
       }
       userLastMessageTime[socket.id] = Date.now();
@@ -3871,7 +3890,7 @@ io.on('connection', (socket) => {
         // 3. Disconnect all live users from this IP or username
         const liveToKick = users.filter((u) => u.username.toLowerCase() === uName.toLowerCase() || (targetIp && u.ipAddress === targetIp));
         liveToKick.forEach((kUser) => {
-          io.to(kUser.id).emit('kickedByAdmin', { reason: `تم حظرك نهائياً وحظر عنوان الـ IP من دخول حسان برو بقرار إداري (${banReason}).`, by: admin.username });
+          io.to(kUser.id).emit('kickedByAdmin', { reason: `تم حظراً نهائياً وحظر عنوان الـ IP من دخول حسان برو بقرار إداري (${banReason}).`, by: admin.username });
           if (kUser.micSlot !== null) {
             const slots = getMicSlotsForRoom(kUser.room);
             const slot = slots.find((s) => s.slotNumber === kUser.micSlot);
