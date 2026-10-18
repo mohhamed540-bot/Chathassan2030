@@ -32,6 +32,11 @@ body {
   touch-action: manipulation;
 }
 
+/* Keep the unthemed Vite shell invisible until shared appearance data is committed. */
+.app-booting #root {
+  visibility: hidden;
+}
+
 #root {
   width: 100%;
   max-width: 100vw;

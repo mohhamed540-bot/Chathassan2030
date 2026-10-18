@@ -1393,6 +1393,12 @@ export default function App() {
     return DEFAULT_FALCON_AVATAR_ICON;
   });
 
+  useEffect(() => {
+    if (appearanceReady) {
+      document.body.classList.remove('app-booting');
+    }
+  }, [appearanceReady]);
+
   // The first public screen is intentionally gated by `initialRoster`, which carries
   // the server's shared appearance. Do not reveal the cached/default theme on a
   // timeout: doing so causes a visible flash when MongoDB/Railway responds later.
@@ -3613,7 +3619,7 @@ export default function App() {
     });
 
     s.on('forceMoveRoom', ({ room }: { room: string }) => {
-      showToast(`تم نقلك إلى غرفة [${room}] بواسطة الإدارة.`, 'info');
+      showToast(`تم نقلك إلى غرفة [${room}] بواسطة الإد��رة.`, 'info');
     });
 
     s.on('userRoleUpdated', ({ role }: { role: 'admin' | 'super' | 'member' | 'guest' }) => {
@@ -8049,7 +8055,7 @@ export default function App() {
                 {emojiPickerTab === 'custom' && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-[10px] text-slate-400 px-1">
-                      <span>انقر على الفيس لإدراج كوده بالرسالة تلقائياً:</span>
+                      <span>انقر على الفيس لإدراج كوده بالرسالة تلق��ئياً:</span>
                       <span className="font-mono text-purple-300 font-bold">
                         {emblemsConfig.items.filter((i) => i.type === 'emoji').length} فيس متاح
                       </span>
@@ -10739,7 +10745,7 @@ export default function App() {
                             <span>مكالمات صوت وفيديو مشفرة (P2P E2EE):</span>
                           </div>
                           <p className="text-[11px] text-slate-300 leading-relaxed">
-                            جميع المكالمات الصوتية والمرئية الخاصة بينك وبين <strong>{selectedPmUser.username}</strong> مشفرة من الطرفين مباشرة بتقنية WebRTC DTLS-SRTP 256-bit، ولا تمر بأي خادم وسيط أو تسجيل.
+                            جميع المكالمات ��لصوتية والمرئية الخاصة بينك وبين <strong>{selectedPmUser.username}</strong> مشفرة من الطرفين مباشرة بتقنية WebRTC DTLS-SRTP 256-bit، ولا تمر بأي خادم وسيط أو تسجيل.
                           </p>
                         </div>
 
@@ -13490,7 +13496,7 @@ export default function App() {
                         setBannerPickerTargetUser((prev) => prev ? { ...prev, nameBannerUrl: customBannerUrlInput.trim() } : null);
                         setProfileTargetUser((prev) => prev ? { ...prev, nameBannerUrl: customBannerUrlInput.trim() } : null);
                         setShowBannerPickerModal(false);
-                        showToast(`تم تثبيت البنر المخصص لـ [${bannerPickerTargetUser.username}] بنجاح 🌟`, 'success');
+                        showToast(`تم تثبيت البنر المخصص لـ [${bannerPickerTargetUser.username}] ب��جاح 🌟`, 'success');
                       }}
                       className="px-4 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 disabled:opacity-40 text-black font-black rounded-xl text-xs cursor-pointer shadow-md shrink-0"
                     >
