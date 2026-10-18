@@ -27,8 +27,14 @@ body {
   overflow: hidden;
   overflow-x: hidden !important;
   background-color: #070b13;
+  color-scheme: dark;
   -webkit-text-size-adjust: 100%;
   touch-action: manipulation;
+}
+
+/* Keep the unthemed Vite shell invisible until shared appearance data is committed. */
+.app-booting #root {
+  visibility: hidden;
 }
 
 #root {
