@@ -1393,11 +1393,9 @@ export default function App() {
     return DEFAULT_FALCON_AVATAR_ICON;
   });
 
-  useEffect(() => {
-    // Never block the app forever if the backend is temporarily unavailable.
-    const fallback = window.setTimeout(() => setAppearanceReady(true), 10000);
-    return () => window.clearTimeout(fallback);
-  }, []);
+  // The first public screen is intentionally gated by `initialRoster`, which carries
+  // the server's shared appearance. Do not reveal the cached/default theme on a
+  // timeout: doing so causes a visible flash when MongoDB/Railway responds later.
 
   // Chat Data & Stream (Screenshot 2)
   // Preserved in sessionStorage for this browser tab session;
@@ -2820,7 +2818,7 @@ export default function App() {
       }
     );
 
-    // General Welcome Settings Updated listener (تحديثات الرسائل الترحيبية العامة للشات)
+    // General Welcome Settings Updated listener (تحديثات الرسائل الترحيبية ال��امة للشات)
     s.on('generalWelcomeUpdated', (data: { enabled: boolean; message: string; title: string }) => {
       setGeneralWelcome(data);
     });
@@ -6091,7 +6089,7 @@ export default function App() {
                   </button>
                 </div>
                 <p className="text-[10px] text-amber-800">
-                  معرف دقيق وثابت يستخرج من خصائص معالج هاتف العضو ودقة الشاشة واللمس، ويكشف العضو حتى لو بدل اسمه أو متصفحه.
+                  معرف دقيق وثابت يستخرج من خصائص معالج هاتف العضو و��قة الشاشة واللمس، ويكشف العضو حتى لو بدل اسمه أو متصفحه.
                 </p>
               </div>
 
@@ -7522,7 +7520,7 @@ export default function App() {
                         ⋮
                       </button>
 
-                      {/* Message Action Menu (يظهر مباشرة بجوار وأمام زر الثلاث نقاط مع منع إغلاقها عند النقر بالداخل) */}
+                      {/* Message Action Menu (يظهر مباش��ة بجوار وأمام زر الثلاث نقاط مع منع إغلاقها عند النقر بالداخل) */}
                       {activeMsgMenuId === msg.id && (
                         <div
                           onClick={(e) => e.stopPropagation()}
@@ -9662,7 +9660,7 @@ export default function App() {
                                         type="button"
                                         onClick={() => handleDeleteWallComment(post.id, cm.id)}
                                         className="text-slate-400 hover:text-rose-600 p-0.5 transition-colors cursor-pointer"
-                                        title="حذف هذا التعليق 🗑️"
+                                        title="حذف هذا التع��يق 🗑️"
                                       >
                                         <Trash2 className="w-3 h-3 text-rose-500" />
                                       </button>
@@ -10514,7 +10512,7 @@ export default function App() {
                           });
                           setPmReplyingTo(null);
                           setIsPmRecordingVoice(false);
-                          showToast('تم إرسال التسجيل الصوتي في الخاص 🎙️', 'success');
+                          showToast('تم ��رسال التسجيل الصوتي في الخاص 🎙️', 'success');
                         }}
                         onCancel={() => setIsPmRecordingVoice(false)}
                       />
@@ -11322,7 +11320,7 @@ export default function App() {
                       setSelectedJoinSound(sId);
                       sounds.setJoinSound(sId);
                       sounds.previewJoinSound(sId);
-                      showToast('تم حفظ نغمة دخول الأعضاء 🎶', 'success');
+                      showToast('تم حفظ نغمة دخول الأعضاء ����', 'success');
                     }}
                     className="w-full p-2 border border-slate-300 rounded-lg text-xs bg-white text-slate-800 font-semibold outline-none focus:border-amber-600"
                   >
@@ -11470,7 +11468,7 @@ export default function App() {
                 className="w-full py-2.5 bg-[#dc2626] hover:bg-red-700 text-white font-black rounded-xl shadow flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
               >
                 <LogOut className="w-4 h-4" />
-                <span>تسجيل خروج ومسح المحادثات</span>
+                <span>تسجيل خروج ومسح ��لمحادثات</span>
               </button>
             </div>
           </div>
