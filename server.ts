@@ -2415,9 +2415,12 @@ io.on('connection', (socket) => {
       isTyping: false,
       timestamp: Date.now()
     });
-    io.to(currentRoom).emit('roomUsers', { room: currentRoom, users: users.filter((u) => u.room === currentRoom) });
-    io.emit('onlineCountUpdated', users.length);
-    socket.emit('leftRoomSuccess', { room: currentRoom });
+  io.to(currentRoom).emit('roomUsers', { room: currentRoom, users: users.filter((u) => u.room === currentRoom) });
+  // Room membership is presence data: publish one authoritative snapshot after leaving.
+  io.emit('allUsers', users);
+  io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
+  io.emit('onlineCountUpdated', users.filter((u) => u.presenceState !== 'offline').length);
+  socket.emit('leftRoomSuccess', { room: currentRoom });
   });
 
   // Chat Shortcuts Listeners (إدارة واستعلام اختصارات الشات الذكية)
@@ -2603,8 +2606,12 @@ io.on('connection', (socket) => {
         room: targetRoom
       });
 
-      io.emit('userPresenceUpdated', { userId: socket.id, username: session.user.username, state: 'online' });
-      socket.emit('micSlotsUpdated', getMicSlotsForRoom(targetRoom));
+  io.emit('userPresenceUpdated', { userId: socket.id, username: session.user.username, state: 'online' });
+  // Publish the same authoritative room and member snapshot after joining.
+  io.emit('allUsers', users);
+  io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
+  io.emit('onlineCountUpdated', users.filter((u) => u.presenceState !== 'offline').length);
+  socket.emit('micSlotsUpdated', getMicSlotsForRoom(targetRoom));
 
       io.to(targetRoom).emit('roomUsers', {
         room: targetRoom,
@@ -4182,7 +4189,7 @@ io.on('connection', (socket) => {
         break;
       }
 
-      // تغيير الرتبة والصلاحيات (Update Role - Admin Only - للأعضاء المتصلين وغير المتصلين)
+      // تغيير الرتبة والصلاحيات (Update Role - Admin Only - ل��أعضاء المتصلين وغير المتصلين)
       case 'updateRole': {
         const uName = (targetUsername || target?.username || '').trim();
         if (value === 'admin' || value === 'super' || value === 'member' || value === 'guest') {

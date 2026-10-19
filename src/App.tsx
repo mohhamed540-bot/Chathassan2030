@@ -432,7 +432,7 @@ const THEME_STYLES: Record<ThemeId, ThemeFullStyle> = {
     recommendedTextColor: '#000000',
     recommendedNameColor: '#000000'
   },
-  // 🏢 2. الديواني الرسمي الفاخر (أبيض ملكي + كحلي فحمي رسمي)
+  // 🏢 2. الديواني الرسمي الفاخر (أبيض ملكي + كحلي ف��مي رسمي)
   'official-royal-white': {
     headerBg: 'bg-white',
     headerBorder: 'border-slate-300 shadow-md',
@@ -2989,9 +2989,10 @@ export default function App() {
   setAllConnectedUsers(Array.from(uniqueUsers.values()));
   });
 
-    s.on('allRegisteredMembers', (members: any[]) => {
-      setAllRegisteredMembers(members || []);
-    });
+  s.on('allRegisteredMembers', (members: any[]) => {
+  // The server snapshot is authoritative for online state and room membership.
+  setAllRegisteredMembers(Array.isArray(members) ? members : []);
+  });
 
     // User presence state listener (🟢 Green: online, 🟡 Yellow: away/background, ⚪ Gray: offline)
     s.on('userPresenceUpdated', ({ username, state }: { userId: string; username: string; state: 'online' | 'away' | 'offline' }) => {
@@ -5786,7 +5787,7 @@ export default function App() {
                           setNotificationPermission(perm);
                           if (perm === 'granted') {
                             sendTestNotification().catch(() => {});
-                            showToast('تم إرسال إشعار تجريبي للمتصفح 🧪', 'success');
+                            showToast('تم إرسال إشع��ر تجريبي للمتصفح 🧪', 'success');
                           } else {
                             showToast('يرجى السماح بالإشعارات في المتصفح أولاً', 'info');
                           }
@@ -12105,7 +12106,7 @@ export default function App() {
                       {/* Row 3 */}
                       <button
                         onClick={() => {
-                          const r = prompt('سبب الطرد:');
+                          const r = prompt('سبب ��لطرد:');
                           handleAdminAction('kick', profileTargetUser.username, undefined, r || undefined);
                         }}
                         className="p-2 rounded bg-rose-100 hover:bg-rose-200 border border-rose-300 text-rose-700 flex items-center justify-center gap-1 cursor-pointer"
@@ -13502,7 +13503,7 @@ export default function App() {
                   rows={2}
                   value={storyCaption}
                   onChange={(e) => setStoryCaption(e.target.value)}
-                  placeholder="...ماذا يدور في خاطرك اليوم؟"
+                  placeholder="...ماذا يدو�� في خاطرك اليوم؟"
                   className="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-400 outline-none focus:border-amber-500 resize-none font-medium"
                 />
               </div>
