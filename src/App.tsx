@@ -97,6 +97,7 @@ import { AudioEqualizerAndEffects } from './components/AudioEqualizerAndEffects'
 import { InteractiveGamesSuite } from './components/InteractiveGamesSuite';
 import { IdentityProfileStudio } from './components/IdentityProfileStudio';
 import { ThemeAndWallpaperCenter, THEMES_LIST, WALLPAPERS_LIST, FONTS_LIST } from './components/ThemeAndWallpaperCenter';
+import type { ThemeDefinition } from './components/ThemeAndWallpaperCenter';
 import { SystemDiagnosticsModal } from './components/SystemDiagnosticsModal';
 import { ChatPowerToolsBar } from './components/ChatPowerToolsBar';
 import { UltimateMegaFeatures50 } from './components/UltimateMegaFeatures50';
@@ -359,9 +360,11 @@ const VINTAGE_STICKERS = [
 ];
 
 // Rich Message Reactions List
-const AVAILABLE_REACTIONS = ['❤️', '😂', '🦅', '��', '🔥', '🌹', '👏', '💎', '☕', '⚔️', '🌙', '💯'];
+const AVAILABLE_REACTIONS = ['❤️', '😂', '🦅', '���', '🔥', '🌹', '👏', '💎', '☕', '⚔️', '🌙', '💯'];
 
 // Multi-color Visual Themes Comprehensive Styling Presets (تطبيق كامل للثيم على كافة أجزاء الشات)
+type ThemeId = ThemeDefinition['id'];
+
 export interface ThemeFullStyle {
   headerBg: string;
   headerBorder: string;
@@ -395,7 +398,7 @@ export interface ThemeFullStyle {
   recommendedNameColor?: string;
 }
 
-const THEME_STYLES: Record<string, ThemeFullStyle> = {
+const THEME_STYLES: Record<ThemeId, ThemeFullStyle> = {
   // 📄 1. الثيم الرسمي الفاتح (خلفيات ناصعة + خطوط سوداء فاحمة عالية التباين)
   'official-pure-light': {
     headerBg: 'bg-white',
@@ -3757,7 +3760,7 @@ export default function App() {
       });
 
       if (!isConnectedNow && (!activeSocket || !activeSocket.connected)) {
-        setLoginError('جاري الاتصال بسيرفر الدردشة... يرجى الانتظار ثوانٍ قليلة حتى يكتمل الاتصال ثم إعادة المحاولة.');
+        setLoginError('جاري الاتصال بسيرفر الدردشة... يرجى الانتظار ثوانٍ قل��لة حتى يكتمل الاتصال ثم إعادة المحاولة.');
         setIsSubmitting(false);
         return;
       }
@@ -9082,7 +9085,7 @@ export default function App() {
                           ) : u.presenceState === 'offline' ? (
                             <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-slate-400 border-2 border-white" title="غير متصل ⚪" />
                           ) : (
-                            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white shadow-xs" title="متصل بغرفة أخرى 🟢" />
+                            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white shadow-xs" title="متصل بغرفة أ��رى 🟢" />
                           )}
                         </div>
                         <div className="min-w-0 text-right">
@@ -10539,7 +10542,7 @@ export default function App() {
                           }`}
                           title={
                             pmSelfDestructSeconds > 0
-                              ? `مؤقت الاختفاء الذاتي مفعل (${pmSelfDestructSeconds < 60 ? `${pmSelfDestructSeconds}ث` : `${Math.floor(pmSelfDestructSeconds / 60)}د`}) - انقر للتعديل`
+                              ? `مؤقت الاختفاء الذات�� مفعل (${pmSelfDestructSeconds < 60 ? `${pmSelfDestructSeconds}ث` : `${Math.floor(pmSelfDestructSeconds / 60)}د`}) - انقر للتعديل`
                               : 'تفعيل الرسائل ذاتية الاختفاء (Self-destruct) 🔥'
                           }
                         >
@@ -12964,7 +12967,7 @@ export default function App() {
                     value={currentRoomSettingsForm.welcomeMessage}
                     onChange={(e) => setCurrentRoomSettingsForm({ ...currentRoomSettingsForm, welcomeMessage: e.target.value })}
                     className="w-full p-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs outline-none focus:border-emerald-500 resize-none font-medium"
-                    placeholder="مثال: أهلاً بكم في غرفتنا.. نتمنى لكم أسعد الأوقات والالتزام بالاحترام المتبادل 🌹"
+                    placeholder="مثال: أهلاً بكم في غرفتنا.. نتمنى لكم أسعد ا��أوقات والالتزام بالاحترام المتبادل 🌹"
                   />
                 </div>
 
