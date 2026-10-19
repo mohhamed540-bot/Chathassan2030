@@ -1542,7 +1542,7 @@ export default function App() {
   } | null>(null);
   const [showRevealedNicksModal, setShowRevealedNicksModal] = useState(false);
 
-  // Unread Wall Posts Counter State (عداد رسائل ومنشورات الحائط الجديدة)
+  // Unread Wall Posts Counter State (عداد رسائل ومنشورات الحائط ��لجديدة)
   const [unreadWallCount, setUnreadWallCount] = useState<number>(0);
   const lastSeenWallTimeRef = useRef<number>(Date.now());
 
@@ -2076,7 +2076,7 @@ export default function App() {
       if (exists) {
         showToast(`تم إلغاء تجاهل [${username}] بنجاح ✔️`, 'info');
       } else {
-        showToast(`تم تجاهل [${username}] بنجاح 🚫 لن تظهر رسائله لك بعد الآن.`, 'success');
+        showToast(`تم تجاهل [${username}] بنجاح 🚫 لن ��ظهر رسائله لك بعد الآن.`, 'success');
       }
       return next;
     });
@@ -3186,6 +3186,19 @@ export default function App() {
       setCriticalBroadcast(data);
       sounds.playGeneralAlertPing();
       confetti({ particleCount: 60, spread: 80, origin: { y: 0.3 } });
+    });
+
+    s.on('roomJoined', ({ user }: { user: User }) => {
+      setCurrentUser(user);
+      currentUserRef.current = user;
+    });
+
+    s.on('profileUpdated', ({ user }: { user: User }) => {
+      setCurrentUser(user);
+      currentUserRef.current = user;
+      setSettingName(user.username);
+      setSettingQuote(user.statusQuote);
+      setSettingAvatar(user.avatarUrl || '');
     });
 
     s.on('loginSuccess', ({ user, sessionToken }: { user: User; sessionToken?: string }) => {
@@ -6213,7 +6226,7 @@ export default function App() {
                     onClick={() => {
                       const isMuted = audioManager?.toggleMute() ?? false;
                       sounds.playToggleMute(isMuted);
-                      showToast(isMuted ? 'تم كتم صوت الميكروفون 🔇' : 'تم تشغيل المايك 🎙️', 'info');
+                      showToast(isMuted ? 'تم كتم صوت الميكروفون 🔇' : '��م تشغيل المايك 🎙️', 'info');
                       setMicActionSlot(null);
                     }}
                     className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl flex items-center justify-center gap-2 border cursor-pointer transition-colors"
@@ -8504,7 +8517,7 @@ export default function App() {
                 type="button"
                 onClick={handleLeaveCurrentRoom}
                 className="w-8 h-8 rounded-lg text-rose-500 hover:text-white hover:bg-rose-600 border border-rose-300 flex items-center justify-center transition-all cursor-pointer flex-shrink-0 shadow-2xs"
-                title="الخروج من الغرفة الحالية فقط والعودة لقائمة الغرف"
+                title="الخروج من الغرفة الحالية ف��ط والعودة لقائمة الغرف"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -11350,7 +11363,7 @@ export default function App() {
                           onClick={() => toggleIgnoreUser(username)}
                           className="px-2 py-0.5 rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-[10px] font-bold transition-colors cursor-pointer"
                         >
-                          إلغاء التجاهل ✔️
+                          إ��غاء التجاهل ✔️
                         </button>
                       </div>
                     ))}
@@ -13797,7 +13810,7 @@ export default function App() {
                   </div>
                   <div>
                     <h3 className="font-bold text-sm text-white">حالة الاتصال والجلسة</h3>
-                    <p className="text-[10px] text-amber-300/70">مراقبة الجلسة اللحظية وسرعة الخادم</p>
+                    <p className="text-[10px] text-amber-300/70">مراقبة الجلسة اللحظية ��سرعة الخادم</p>
                   </div>
                 </div>
                 <button

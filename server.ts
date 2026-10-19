@@ -3311,8 +3311,8 @@ io.on('connection', (socket) => {
 
     logMonitorEvent('join', `دخل ${newUser.username} إلى ${newUser.room} (العلم: ${realFlag} - IP: ${clientIp})`, newUser.username);
 
-    // Send success confirmation with sessionToken
-    socket.emit('loginSuccess', { user: newUser, sessionToken: userSessionToken });
+  // Joining another room is not a new login. Keep the existing client session intact.
+  socket.emit('roomJoined', { user: newUser });
 
     if (isUserJailed) {
       socket.emit('systemAlert', '🚔 تنبيه: أنت قيد السجن والاحتجاز الإداري في (سجن حسان برو) بموجب قرار إداري صارم. لا يمكنك التحدث أو الكتابة أو مغادرة السجن إلا بقرار الإفراج.');
@@ -3481,7 +3481,7 @@ io.on('connection', (socket) => {
         return;
       }
       if ((mediaUrl || voiceNote) && likesSettings.roomMediaLikes > 0 && user.likes < likesSettings.roomMediaLikes) {
-        socket.emit('systemAlert', `عفواً، يتطلب إرسال الوسائط في الغرفة ${likesSettings.roomMediaLikes} لايك على الأقل. رصيدك الحالي: ${user.likes} 👍`);
+        socket.emit('systemAlert', `عفواً، يتطلب إرسال ال��سائط في الغرفة ${likesSettings.roomMediaLikes} لايك على الأقل. رصيدك الحالي: ${user.likes} 👍`);
         return;
       }
     }
@@ -4552,8 +4552,8 @@ io.on('connection', (socket) => {
         io.to(r.id).emit('roomUsers', { room: r.id, users: users.filter((u) => u.room === r.id) });
       });
       io.emit('allUsers', users);
-      socket.emit('loginSuccess', { user });
-      socket.emit('systemAlert', 'تم حفظ وتحديث بيانات ملفك الشخصي بنجاح ✅');
+  socket.emit('profileUpdated', { user });
+  socket.emit('systemAlert', 'تم حفظ وتحديث بيانات ملفك الشخصي بنجاح ✅');
     }
   );
 
