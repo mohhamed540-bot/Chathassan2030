@@ -44,8 +44,12 @@ export interface IStorageAdapter {
  * Automatically detects and reads Storage configuration from process.env
  */
 export function getStorageConfigFromEnv(): StorageConfig {
-  // Find project root uploads directory
-  const rootUploadsDir = path.resolve(__dirname, '../../uploads');
+  // Prefer Railway's mounted persistent volume when configured. The mount path
+  // is a filesystem directory, not an HTTP endpoint.
+  const configuredUploadsDir = process.env.UPLOADS_DIR || process.env.RAILWAY_VOLUME_MOUNT_PATH;
+  const rootUploadsDir = configuredUploadsDir
+    ? path.resolve(configuredUploadsDir)
+    : path.resolve(__dirname, '../../uploads');
   if (!fs.existsSync(rootUploadsDir)) {
     try {
       fs.mkdirSync(rootUploadsDir, { recursive: true });
@@ -66,8 +70,8 @@ export function getStorageConfigFromEnv(): StorageConfig {
     };
   }
 
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('No persistent media storage configured. Set STORAGE_ENDPOINT before starting production.');
+  if (process.env.NODE_ENV === 'production' && !configuredUploadsDir) {
+    throw new Error('No persistent media storage configured. Set STORAGE_ENDPOINT or UPLOADS_DIR to a Railway Volume mount path before starting production.');
   }
 
   return {

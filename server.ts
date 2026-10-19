@@ -81,8 +81,9 @@ const io = new SocketIOServer(httpServer, {
 app.use(express.json({ limit: '150mb' }));
 app.use(express.urlencoded({ limit: '150mb', extended: true }));
 
-// Uploads storage directory for heavy media (videos, photos, audio)
-const uploadsDir = path.join(__dirname, 'uploads');
+  // Serve media from the same persistent directory used by StorageManager.
+  const uploadsDir = process.env.UPLOADS_DIR || process.env.RAILWAY_VOLUME_MOUNT_PATH
+    || path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
