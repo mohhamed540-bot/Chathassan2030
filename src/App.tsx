@@ -2502,7 +2502,7 @@ export default function App() {
         else if (tz.includes('dubai') || tz.includes('uae')) setDetectedFlag('🇦🇪');
         else if (tz.includes('qatar')) setDetectedFlag('🇶🇦');
         else if (tz.includes('bahrain')) setDetectedFlag('🇧🇭');
-        else if (tz.includes('muscat') || tz.includes('oman')) setDetectedFlag('🇴����');
+        else if (tz.includes('muscat') || tz.includes('oman')) setDetectedFlag('🇴🇲');
         else if (tz.includes('tunis') || tz.includes('tunisia')) setDetectedFlag('🇹🇳');
         else if (tz.includes('tripoli') || tz.includes('libya')) setDetectedFlag('🇱🇾');
         else if (tz.includes('khartoum') || tz.includes('sudan')) setDetectedFlag('🇸🇩');
@@ -3186,6 +3186,19 @@ export default function App() {
       setCriticalBroadcast(data);
       sounds.playGeneralAlertPing();
       confetti({ particleCount: 60, spread: 80, origin: { y: 0.3 } });
+    });
+
+    s.on('roomJoined', ({ user }: { user: User }) => {
+      setCurrentUser(user);
+      currentUserRef.current = user;
+    });
+
+    s.on('profileUpdated', ({ user }: { user: User }) => {
+      setCurrentUser(user);
+      currentUserRef.current = user;
+      setSettingName(user.username);
+      setSettingQuote(user.statusQuote);
+      setSettingAvatar(user.avatarUrl || '');
     });
 
     s.on('loginSuccess', ({ user, sessionToken }: { user: User; sessionToken?: string }) => {
@@ -4789,7 +4802,7 @@ export default function App() {
     try {
       const res = await uploadMediaWithProgress(file, (percent) => {
         setUploadProgress(percent);
-        setUploadStatusText(`جار�� رفع الـ${typeLabel}... ${percent}%`);
+        setUploadStatusText(`جارٍ رفع الـ${typeLabel}... ${percent}%`);
       });
 
       setUploadProgress(null);
@@ -4996,7 +5009,7 @@ export default function App() {
                   }}
                   className="w-full py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-xl text-xs shadow-lg transition-transform active:scale-95 cursor-pointer"
                 >
-                  حسناً، فهمت ✔️
+                  حسنًا، فهمت ✔️
                 </button>
               </div>
             </div>
@@ -7504,7 +7517,7 @@ export default function App() {
                       <div className="flex items-center justify-between gap-1 pb-1.5 mb-1.5 border-b border-slate-800/90">
                         <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
                           <span className="text-[11px] text-amber-400 font-bold ml-1 select-none flex-shrink-0">
-                            ��فاعل:
+                            تفاعل:
                           </span>
                           {AVAILABLE_REACTIONS.map((em) => (
                             <button
@@ -11601,7 +11614,7 @@ export default function App() {
                           💬 الرسائل: {eng.messagesSent || 0}
                         </span>
                         <span className="bg-white/80 border border-slate-200 rounded px-1 py-0.5" title="المنشورات والخواطر على الحائط">
-                          📝 الحا��ط: {eng.wallPostsCount || 0}
+                          📝 الحائط: {eng.wallPostsCount || 0}
                         </span>
                         <span className="bg-white/80 border border-slate-200 rounded px-1 py-0.5" title="دقائق التحدث أو الصعود على المايك">
                           🎙️ المايك: {eng.micTimeMinutes || 0} د

@@ -731,7 +731,7 @@ const DEFAULT_SEED_SHORTCUTS: ChatShortcut[] = [
     id: 'sc-3',
     trigger: 'سلام',
     replacement: 'السلام عليكم ورحمة الله وبركاته 🌹',
-    createdBy: 'إدارة حسا�� برو',
+    createdBy: 'إدارة حصن برو',
     createdAt: Date.now() - 3600000
   },
   {
@@ -1465,7 +1465,7 @@ export function getAllRegisteredMembersPayload() {
       isJailed: Boolean(m.isJailed || jailedUsernames.has(username.toLowerCase())),
       isOnline: Boolean(onlineUser && presenceState !== 'offline'),
       presenceState,
-      currentRoom: onlineUser ? onlineUser.room : '��ارج الغرف',
+      currentRoom: onlineUser ? onlineUser.room : 'خارج الغرف',
       lastSeen: onlineUser ? Date.now() : (m.lastSeen || Date.now() - 3600000),
       engagement: m.engagement || getDefaultEngagement()
     };
@@ -3311,8 +3311,8 @@ io.on('connection', (socket) => {
 
     logMonitorEvent('join', `دخل ${newUser.username} إلى ${newUser.room} (العلم: ${realFlag} - IP: ${clientIp})`, newUser.username);
 
-    // Send success confirmation with sessionToken
-    socket.emit('loginSuccess', { user: newUser, sessionToken: userSessionToken });
+  // Joining another room is not a new login. Keep the existing client session intact.
+  socket.emit('roomJoined', { user: newUser });
 
     if (isUserJailed) {
       socket.emit('systemAlert', '🚔 تنبيه: أنت قيد السجن والاحتجاز الإداري في (سجن حسان برو) بموجب قرار إداري صارم. لا يمكنك التحدث أو الكتابة أو مغادرة السجن إلا بقرار الإفراج.');
@@ -3896,7 +3896,7 @@ io.on('connection', (socket) => {
         io.emit('bannedListUpdated', Array.from(bannedRecords.values()));
         io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
         logMonitorEvent('ban', `حظر دائم لـ ${uName} وعنوان الـ IP [${targetIp}] بواسطة [${admin.role.toUpperCase()}] ${admin.username} (السبب: ${banReason})`, admin.username, uName);
-        socket.emit('systemAlert', `تم تطبيق الباند والحظر النهائي عل�� ${uName} وعنوان الـ IP [${targetIp}] بنجاح.`);
+        socket.emit('systemAlert', `تم تطبيق الباند والحظر النهائي على ${uName} وعنوان الـ IP [${targetIp}] بنجاح.`);
         break;
       }
 
@@ -4504,7 +4504,7 @@ io.on('connection', (socket) => {
         }
       }
 
-      // العلم الحقيقي مشفر تلقائياً عند الدخول ومقفل لمنع اختيار أعلام وهمية
+      // العلم الحقيقي مشفر تلقائيًا عند الدخول ومقفل لمنع اختيار أعلام وهمية
       // user.flag is preserved from real country IP detection
       if (statusQuote !== undefined) user.statusQuote = sanitizeText(statusQuote);
       if (avatarUrl !== undefined) user.avatarUrl = avatarUrl;
@@ -4552,8 +4552,8 @@ io.on('connection', (socket) => {
         io.to(r.id).emit('roomUsers', { room: r.id, users: users.filter((u) => u.room === r.id) });
       });
       io.emit('allUsers', users);
-      socket.emit('loginSuccess', { user });
-      socket.emit('systemAlert', 'تم حفظ وتحديث بيانات ملفك الشخصي بنجاح ✅');
+  socket.emit('profileUpdated', { user });
+  socket.emit('systemAlert', 'تم حفظ وتحديث بيانات ملفك الشخصي بنجاح ✅');
     }
   );
 
