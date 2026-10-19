@@ -1542,7 +1542,7 @@ export default function App() {
   } | null>(null);
   const [showRevealedNicksModal, setShowRevealedNicksModal] = useState(false);
 
-  // Unread Wall Posts Counter State (عداد رسائل ومنشورات الحائط ��لجديدة)
+  // Unread Wall Posts Counter State (عداد رسائل ومنشورات الحائط ����لجديدة)
   const [unreadWallCount, setUnreadWallCount] = useState<number>(0);
   const lastSeenWallTimeRef = useRef<number>(Date.now());
 
@@ -2972,9 +2972,22 @@ export default function App() {
       setOnlineCount(count);
     });
 
-    s.on('allUsers', (users: User[]) => {
-      setAllConnectedUsers(users || []);
-    });
+  s.on('allUsers', (users: User[]) => {
+  const uniqueUsers = new Map<string, User>();
+  for (const user of users || []) {
+    const key = user.username.trim().toLowerCase();
+    const existing = uniqueUsers.get(key);
+    const isCurrentRoom = user.room?.trim().toLowerCase() === currentUserRef.current?.room?.trim().toLowerCase();
+    const existingIsCurrentRoom = existing?.room?.trim().toLowerCase() === currentUserRef.current?.room?.trim().toLowerCase();
+    const shouldReplace = !existing
+      || (isCurrentRoom && !existingIsCurrentRoom)
+      || (!isCurrentRoom && !existingIsCurrentRoom && user.presenceState === 'online' && existing.presenceState !== 'online');
+    if (shouldReplace) {
+      uniqueUsers.set(key, user);
+    }
+  }
+  setAllConnectedUsers(Array.from(uniqueUsers.values()));
+  });
 
     s.on('allRegisteredMembers', (members: any[]) => {
       setAllRegisteredMembers(members || []);
@@ -8903,7 +8916,7 @@ export default function App() {
                 <div className="flex-1 overflow-y-auto divide-y divide-slate-800/40">
                   {/* Header: ��تواجدون بنفس الغرفة */}
                   <div className={`${curTheme.subHeaderBg} ${curTheme.accentText} text-xs font-bold px-3 py-1.5 flex items-center justify-between border-b ${curTheme.subHeaderBorder}`}>
-                    <span>المتواجدون معك في الغرفة الحالية ({currentRoomUsers.length})</span>
+                    <span>المتواجدو�� معك في الغرفة الحالية ({currentRoomUsers.length})</span>
                     <span className="text-[10px] text-emerald-400 font-normal">● متصلون الآن</span>
                   </div>
 
@@ -9171,7 +9184,7 @@ export default function App() {
                             </span>
                           </div>
                           <div className="text-[10px] text-slate-400 truncate max-w-[150px]">
-                            {m.statusQuote || 'عضو مسجل • غير متصل'}
+                            {m.statusQuote || 'عضو مسجل • غير م��صل'}
                           </div>
                         </div>
                       </div>
@@ -9742,7 +9755,7 @@ export default function App() {
                       showToast('تم تحديد جميع المحادثات كمقروءة ✨', 'success');
                     }}
                     className="px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-[10px] font-bold transition-colors cursor-pointer"
-                    title="تصفير وتحديد جميع الرسائل الخاصة كمقروءة"
+                    title="تصفير ��تحديد جميع الرسائل الخاصة كمقروءة"
                   >
                     تحديد الكل كمقروء
                   </button>
@@ -10009,7 +10022,7 @@ export default function App() {
                         ) : state === 'offline' ? (
                           <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-slate-400 border-2 border-white" title="غير متصل ⚪" />
                         ) : (
-                          <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white shadow-xs" title="متواجد ونشط 🟢" />
+                          <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white shadow-xs" title="��تواجد ونشط 🟢" />
                         );
                       })()}
                     </div>
@@ -11015,7 +11028,7 @@ export default function App() {
 
                 {/* Custom Avatar Guide */}
                 <div className="pt-1 text-[11px] text-slate-500 font-medium text-center">
-                  يمكنك رفع صورتك الشخصية الخاصة مباشرة من جهازك بالزر أعلاه، أو إدخال رابط صورتك بالأسفل.
+                  يمكنك رفع صورتك الشخصية الخاصة مباشرة من جهازك ��الزر أعلاه، أو إدخال رابط صورتك بالأسفل.
                 </div>
 
                 {/* Custom Image URL */}
@@ -11054,7 +11067,7 @@ export default function App() {
                       const nextMute = !soundsMuted;
                       setSoundsMuted(nextMute);
                       sounds.setMuted(nextMute);
-                      showToast(nextMute ? 'تم كتم جميع التنبيهات الصوتية 🔇' : 'تم تفعيل الأصوات 🔔', 'info');
+                      showToast(nextMute ? 'تم كتم جمي�� التنبيهات الصوتية 🔇' : 'تم تفعيل الأصوات 🔔', 'info');
                     }}
                     className={`px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer ${
                       soundsMuted ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-800'
