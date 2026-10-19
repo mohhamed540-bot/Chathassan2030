@@ -731,7 +731,7 @@ const DEFAULT_SEED_SHORTCUTS: ChatShortcut[] = [
     id: 'sc-3',
     trigger: 'سلام',
     replacement: 'السلام عليكم ورحمة الله وبركاته 🌹',
-    createdBy: 'إدارة حسان برو',
+    createdBy: 'إدارة حسا�� برو',
     createdAt: Date.now() - 3600000
   },
   {
@@ -1465,7 +1465,7 @@ export function getAllRegisteredMembersPayload() {
       isJailed: Boolean(m.isJailed || jailedUsernames.has(username.toLowerCase())),
       isOnline: Boolean(onlineUser && presenceState !== 'offline'),
       presenceState,
-      currentRoom: onlineUser ? onlineUser.room : 'خارج الغرف',
+      currentRoom: onlineUser ? onlineUser.room : '��ارج الغرف',
       lastSeen: onlineUser ? Date.now() : (m.lastSeen || Date.now() - 3600000),
       engagement: m.engagement || getDefaultEngagement()
     };
@@ -2368,19 +2368,13 @@ io.on('connection', (socket) => {
     const user = users.find((u) => u.id === socket.id);
     if (!user) return;
 
-    if (theme) (user as any).theme = theme;
-    if (fontFamily) (user as any).fontFamily = fontFamily;
-    if (wallpaper) (user as any).wallpaper = wallpaper;
-    if (bubbleStyle) (user as any).bubbleStyle = bubbleStyle;
+    // Global appearance is controlled exclusively by administrators. Never let
+    // login/profile updates overwrite the server-wide appearance.
     if (fontSize) (user as any).fontSize = fontSize;
     if (nameColor) user.nameColor = nameColor;
     if (textColor) user.textColor = textColor;
 
     if (registeredMembers[user.username]) {
-      if (theme) (registeredMembers[user.username] as any).theme = theme;
-      if (fontFamily) (registeredMembers[user.username] as any).fontFamily = fontFamily;
-      if (wallpaper) (registeredMembers[user.username] as any).wallpaper = wallpaper;
-      if (bubbleStyle) (registeredMembers[user.username] as any).bubbleStyle = bubbleStyle;
       if (fontSize) (registeredMembers[user.username] as any).fontSize = fontSize;
       if (nameColor) (registeredMembers[user.username] as any).nameColor = nameColor;
       if (textColor) (registeredMembers[user.username] as any).textColor = textColor;
@@ -2390,10 +2384,6 @@ io.on('connection', (socket) => {
     const sessionToken = user.sessionToken;
     if (sessionToken && activeSessions.has(sessionToken)) {
       const sess = activeSessions.get(sessionToken)!;
-      if (theme) (sess.user as any).theme = theme;
-      if (fontFamily) (sess.user as any).fontFamily = fontFamily;
-      if (wallpaper) (sess.user as any).wallpaper = wallpaper;
-      if (bubbleStyle) (sess.user as any).bubbleStyle = bubbleStyle;
       if (fontSize) (sess.user as any).fontSize = fontSize;
       if (nameColor) sess.user.nameColor = nameColor;
       if (textColor) sess.user.textColor = textColor;
@@ -3906,7 +3896,7 @@ io.on('connection', (socket) => {
         io.emit('bannedListUpdated', Array.from(bannedRecords.values()));
         io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
         logMonitorEvent('ban', `حظر دائم لـ ${uName} وعنوان الـ IP [${targetIp}] بواسطة [${admin.role.toUpperCase()}] ${admin.username} (السبب: ${banReason})`, admin.username, uName);
-        socket.emit('systemAlert', `تم تطبيق الباند والحظر النهائي على ${uName} وعنوان الـ IP [${targetIp}] بنجاح.`);
+        socket.emit('systemAlert', `تم تطبيق الباند والحظر النهائي عل�� ${uName} وعنوان الـ IP [${targetIp}] بنجاح.`);
         break;
       }
 

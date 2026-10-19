@@ -2502,7 +2502,7 @@ export default function App() {
         else if (tz.includes('dubai') || tz.includes('uae')) setDetectedFlag('🇦🇪');
         else if (tz.includes('qatar')) setDetectedFlag('🇶🇦');
         else if (tz.includes('bahrain')) setDetectedFlag('🇧🇭');
-        else if (tz.includes('muscat') || tz.includes('oman')) setDetectedFlag('🇴🇲');
+        else if (tz.includes('muscat') || tz.includes('oman')) setDetectedFlag('🇴����');
         else if (tz.includes('tunis') || tz.includes('tunisia')) setDetectedFlag('🇹🇳');
         else if (tz.includes('tripoli') || tz.includes('libya')) setDetectedFlag('🇱🇾');
         else if (tz.includes('khartoum') || tz.includes('sudan')) setDetectedFlag('🇸🇩');
@@ -4230,16 +4230,14 @@ export default function App() {
         theme: themeId
       });
       showToast('تم تعميم الثيم على كافة المتواجدين والغرف بنجاح! 🎨📢', 'success');
-    } else {
-      socket?.emit('updateUserPreferences', {
-        theme: themeId,
-        textColor: selectedStyle?.recommendedTextColor,
-        nameColor: selectedStyle?.recommendedNameColor
-      });
-    }
+  }
   };
 
   const handleUpdateFontFamily = (fontId: string) => {
+    if (currentUser?.role !== 'admin' && currentUser?.role !== 'super') {
+      showToast('الخط العام يحدده مدير النظام فقط.', 'info');
+      return;
+    }
     setFontFamily(fontId);
     try {
       localStorage.setItem('soqoor_font', fontId);
@@ -4248,8 +4246,6 @@ export default function App() {
     if (currentUser?.role === 'admin' || currentUser?.role === 'super') {
       socket?.emit('updateGlobalAppearance', { fontFamily: fontId });
       showToast('تم تعميم نوع الخط على كافة المتواجدين والغرف بنجاح! 🖋️📢', 'success');
-    } else {
-      socket?.emit('updateUserPreferences', { fontFamily: fontId });
     }
   };
 
@@ -4262,6 +4258,10 @@ export default function App() {
   };
 
   const handleUpdateWallpaper = (wallpaperId: string) => {
+    if (currentUser?.role !== 'admin' && currentUser?.role !== 'super') {
+      showToast('خلفية الشات يحددها مدير النظام فقط.', 'info');
+      return;
+    }
     setActiveWallpaper(wallpaperId);
     try {
       localStorage.setItem('soqoor_wallpaper', wallpaperId);
@@ -4269,12 +4269,14 @@ export default function App() {
     if (currentUser?.role === 'admin' || currentUser?.role === 'super') {
       socket?.emit('updateGlobalAppearance', { wallpaper: wallpaperId });
       showToast('تم تعميم الخلفية على كافة المتواجدين والغرف بنجاح! 🖼️📢', 'success');
-    } else {
-      socket?.emit('updateUserPreferences', { wallpaper: wallpaperId });
     }
   };
 
   const handleUpdateBubbleStyle = (styleId: string) => {
+    if (currentUser?.role !== 'admin' && currentUser?.role !== 'super') {
+      showToast('نمط الفقاعات يحدده مدير النظام فقط.', 'info');
+      return;
+    }
     setBubbleStyle(styleId);
     try {
       localStorage.setItem('soqoor_bubble_style', styleId);
@@ -4282,8 +4284,6 @@ export default function App() {
     if (currentUser?.role === 'admin' || currentUser?.role === 'super') {
       socket?.emit('updateGlobalAppearance', { bubbleStyle: styleId });
       showToast('تم تعميم شكل الفقاعات على كافة المتواجدين والغرف بنجاح! 💬📢', 'success');
-    } else {
-      socket?.emit('updateUserPreferences', { bubbleStyle: styleId });
     }
   };
 
@@ -4789,7 +4789,7 @@ export default function App() {
     try {
       const res = await uploadMediaWithProgress(file, (percent) => {
         setUploadProgress(percent);
-        setUploadStatusText(`جاري رفع الـ${typeLabel}... ${percent}%`);
+        setUploadStatusText(`جار�� رفع الـ${typeLabel}... ${percent}%`);
       });
 
       setUploadProgress(null);
@@ -7504,7 +7504,7 @@ export default function App() {
                       <div className="flex items-center justify-between gap-1 pb-1.5 mb-1.5 border-b border-slate-800/90">
                         <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
                           <span className="text-[11px] text-amber-400 font-bold ml-1 select-none flex-shrink-0">
-                            تفاعل:
+                            ��فاعل:
                           </span>
                           {AVAILABLE_REACTIONS.map((em) => (
                             <button
@@ -11601,7 +11601,7 @@ export default function App() {
                           💬 الرسائل: {eng.messagesSent || 0}
                         </span>
                         <span className="bg-white/80 border border-slate-200 rounded px-1 py-0.5" title="المنشورات والخواطر على الحائط">
-                          📝 الحائط: {eng.wallPostsCount || 0}
+                          📝 الحا��ط: {eng.wallPostsCount || 0}
                         </span>
                         <span className="bg-white/80 border border-slate-200 rounded px-1 py-0.5" title="دقائق التحدث أو الصعود على المايك">
                           🎙️ المايك: {eng.micTimeMinutes || 0} د
