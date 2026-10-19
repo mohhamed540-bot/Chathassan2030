@@ -3008,7 +3008,14 @@ export default function App() {
   );
   setAllRegisteredMembers((prev) => prev.map((member) =>
   member.username.toLowerCase() === username.toLowerCase()
-  ? { ...member, isOnline: state !== 'offline', presenceState: state, currentRoom: member.currentRoom }
+  ? {
+      ...member,
+      isOnline: state !== 'offline',
+      presenceState: state,
+      currentRoom: state === 'offline'
+        ? 'خارج الغرف'
+        : allConnectedUsers.find((user) => user.username.toLowerCase() === username.toLowerCase())?.room || member.currentRoom
+    }
   : member
   ));
   if (currentUserRef.current && currentUserRef.current.username.toLowerCase() === username.toLowerCase()) {
@@ -4156,7 +4163,7 @@ export default function App() {
     handleSendMessage(undefined, sticker, 'sticker');
   };
 
-  // Broadcast General Alert (إرسال إشعار عام للغرفة)
+  // Broadcast General Alert (إرسال إشعار عام للغ��فة)
   const handleSendBroadcastAlert = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!socket || !currentUser) return;
@@ -5161,7 +5168,7 @@ export default function App() {
                     }}
                     className="text-amber-800 bg-amber-200/80 hover:bg-amber-300 px-2 py-0.5 rounded font-bold transition-colors cursor-pointer text-[10px] flex items-center gap-1 shadow-2xs"
                   >
-                    <span>طلب الإذن الآن 🔔</span>
+                    <span>طلب الإذن الآن ����</span>
                   </button>
                 )}
               </div>
@@ -7732,7 +7739,7 @@ export default function App() {
                           }
                         }}
                         className="mb-1.5 px-2.5 py-1.5 bg-amber-100/80 border-r-4 border-amber-500 rounded-lg text-[11px] cursor-pointer hover:bg-amber-200/70 transition-colors flex flex-col gap-0.5 shadow-2xs"
-                        title="انقر للذهاب إلى الرسالة الأصلية المردود عليها"
+                        title="انقر للذهاب إلى الرسالة الأصل��ة المردود عليها"
                       >
                         <div className="font-bold text-amber-900 flex items-center gap-1 text-[10px]">
                           <Reply className="w-3 h-3 rotate-180 text-amber-700" />
@@ -11350,7 +11357,7 @@ export default function App() {
                 </div>
                 {/* Switcher to test all roles */}
                 <div className="pt-1.5 border-t border-amber-200/60">
-                  <div className="text-[10px] font-bold text-amber-900 mb-1">تبديل الرتبة للاختبار والتجربة الفورية:</div>
+                  <div className="text-[10px] font-bold text-amber-900 mb-1">تبديل الرتبة للاختبار والتج��بة الفورية:</div>
                   <div className="grid grid-cols-3 gap-1">
                     <button
                       type="button"
@@ -12093,7 +12100,7 @@ export default function App() {
                             handleAdminAction('updatePassword', profileTargetUser.username, newPass.trim());
                             showToast(`تم تعيين كلمة مرور جديدة للعضو [${profileTargetUser.username}] بنجاح 🔑`, 'success');
                           } else if (newPass !== null) {
-                            showToast('يجب أن تتكون كلمة المرور من 3 خانات على الأقل', 'error');
+                            showToast('يجب أن تتكون كلمة المرور من 3 ��انات على الأقل', 'error');
                           }
                         }}
                         className="p-2 rounded bg-amber-50 hover:bg-amber-100 border border-amber-300 font-bold flex items-center justify-center gap-1 text-amber-900 cursor-pointer"

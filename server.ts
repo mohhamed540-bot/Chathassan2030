@@ -1444,9 +1444,22 @@ const registeredMembers: Record<string, RegisteredMemberInfo> = {
   }
 };
 
+function getPresenceSnapshot(): ConnectedUser[] {
+  const byUsername = new Map<string, ConnectedUser>();
+  for (const user of users) {
+    const key = user.username.trim().toLowerCase();
+    const existing = byUsername.get(key);
+    if (!existing || (user.lastActiveTime || 0) >= (existing.lastActiveTime || 0)) {
+      byUsername.set(key, user);
+    }
+  }
+  return Array.from(byUsername.values());
+}
+
 export function getAllRegisteredMembersPayload() {
+  const presenceSnapshot = getPresenceSnapshot();
   return Object.entries(registeredMembers).map(([username, m]) => {
-    const onlineUser = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
+    const onlineUser = presenceSnapshot.find((u) => u.username.toLowerCase() === username.toLowerCase());
     const presenceState: 'online' | 'away' | 'offline' = onlineUser ? (onlineUser.presenceState || 'online') : 'offline';
     return {
       username,
@@ -1834,7 +1847,7 @@ io.on('connection', (socket) => {
   const cfCountry = (socket.handshake.headers['cf-ipcountry'] as string) || '';
   const detectedRealFlag = getFlagFromCountryCode(cfCountry);
 
-  const currentConnectedCount = users.length;
+  const currentConnectedCount = getPresenceSnapshot().filter((u) => u.presenceState !== 'offline').length;
   io.emit('onlineCountUpdated', currentConnectedCount);
 
   // Send minimal initial configuration payload (<2KB)
@@ -2417,7 +2430,7 @@ io.on('connection', (socket) => {
     });
   io.to(currentRoom).emit('roomUsers', { room: currentRoom, users: users.filter((u) => u.room === currentRoom) });
   // Room membership is presence data: publish one authoritative snapshot after leaving.
-  io.emit('allUsers', users);
+  io.emit('allUsers', getPresenceSnapshot());
   io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
   io.emit('onlineCountUpdated', users.filter((u) => u.presenceState !== 'offline').length);
   socket.emit('leftRoomSuccess', { room: currentRoom });
@@ -2608,7 +2621,7 @@ io.on('connection', (socket) => {
 
   io.emit('userPresenceUpdated', { userId: socket.id, username: session.user.username, state: 'online' });
   // Publish the same authoritative room and member snapshot after joining.
-  io.emit('allUsers', users);
+  io.emit('allUsers', getPresenceSnapshot());
   io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
   io.emit('onlineCountUpdated', users.filter((u) => u.presenceState !== 'offline').length);
   socket.emit('micSlotsUpdated', getMicSlotsForRoom(targetRoom));
@@ -2617,7 +2630,7 @@ io.on('connection', (socket) => {
         room: targetRoom,
         users: users.filter((u) => u.room === targetRoom)
       });
-      io.emit('onlineCountUpdated', users.length);
+      io.emit('onlineCountUpdated', getPresenceSnapshot().filter((u) => u.presenceState !== 'offline').length);
       if (session.user.role === 'admin' || session.user.role === 'super') {
         socket.emit('adminInitialData', {
           bannedList: Array.from(bannedRecords.values()),
@@ -2674,7 +2687,7 @@ io.on('connection', (socket) => {
       if (user.room) {
         io.to(user.room).emit('roomUsers', { room: user.room, users: users.filter((u) => u.room === user.room) });
       }
-      io.emit('onlineCountUpdated', users.length);
+      io.emit('onlineCountUpdated', getPresenceSnapshot().filter((u) => u.presenceState !== 'offline').length);
     }
 
     socket.emit('loggedOutSuccess');
@@ -2842,7 +2855,7 @@ io.on('connection', (socket) => {
     // remains alive. Removing it here made a later online state impossible to
     // publish and caused members in other rooms to appear offline.
     io.emit('userPresenceUpdated', { userId: user.id, username: user.username, state });
-    io.emit('allUsers', users);
+    io.emit('allUsers', getPresenceSnapshot());
     io.to(user.room).emit('roomUsers', {
       room: user.room,
       users: users.filter((u) => u.room === user.room)
@@ -3155,7 +3168,7 @@ io.on('connection', (socket) => {
 
     // =========================================================================
     // ENFORCE STRICT SINGLE-SESSION PER MEMBER / ACCOUNT
-    // (يمنع تعدد الجلسات تماماً: عند تسجيل الدخول من جهاز أو متصفح أو صفحة أخرى،
+    // (يمنع تعدد الجلسات تماماً: عند تسجيل الدخول من جهاز أو متصفح أو صفحة ��خرى،
     // يتم طرد وفصل الجلسة السابقة فوراً واعتماد الجلسة الجديدة فقط)
     // =========================================================================
     const oldSocketIds = new Set<string>();
@@ -3398,7 +3411,7 @@ io.on('connection', (socket) => {
       room: finalTargetRoom,
       users: users.filter((u) => u.room === finalTargetRoom)
     });
-    io.emit('onlineCountUpdated', users.length);
+    io.emit('onlineCountUpdated', getPresenceSnapshot().filter((u) => u.presenceState !== 'offline').length);
 
     // Send admin data only to admin/super users
     if (newUser.role === 'admin' || newUser.role === 'super') {
@@ -4409,7 +4422,7 @@ io.on('connection', (socket) => {
         break;
       }
 
-      // إطلاق صافرة الإنذار الإداري العاجل (Admin Siren)
+      // إطلاق صافرة الإنذار الإداري العاج�� (Admin Siren)
       case 'adminSiren': {
         const sirenText = sanitizeText(value) || '🚨 صفارة إنذار وتنبيه عام من إدارة حسان برو! الرجاء الانتباه والالتزام بالقوانين.';
         io.emit('adminSirenAlert', { from: admin.username, message: sirenText, timestamp: Date.now() });
@@ -4560,7 +4573,7 @@ io.on('connection', (socket) => {
       chatRooms.forEach((r) => {
         io.to(r.id).emit('roomUsers', { room: r.id, users: users.filter((u) => u.room === r.id) });
       });
-      io.emit('allUsers', users);
+      io.emit('allUsers', getPresenceSnapshot());
   socket.emit('profileUpdated', { user });
   socket.emit('systemAlert', 'تم حفظ وتحديث بيانات ملفك الشخصي بنجاح ✅');
     }
@@ -5664,8 +5677,8 @@ io.on('connection', (socket) => {
             users: users.filter((u) => u.room === r.id)
           });
         });
-        io.emit('onlineCountUpdated', users.length);
-        io.emit('allUsers', users);
+        io.emit('onlineCountUpdated', getPresenceSnapshot().filter((u) => u.presenceState !== 'offline').length);
+        io.emit('allUsers', getPresenceSnapshot());
         io.emit('allRegisteredMembers', getAllRegisteredMembersPayload());
         io.emit('roomStatsUpdated', getRoomStatistics());
       }
@@ -5751,7 +5764,7 @@ io.on('connection', (socket) => {
     }
 
     // Real-time online count update to all connected clients
-    const realCountAfter = users.length;
+    const realCountAfter = getPresenceSnapshot().filter((u) => u.presenceState !== 'offline').length;
     io.emit('onlineCountUpdated', realCountAfter);
   });
 });
@@ -5785,7 +5798,7 @@ setInterval(() => {
   }
 
   if (changed) {
-    io.emit('onlineCountUpdated', users.length);
+    io.emit('onlineCountUpdated', getPresenceSnapshot().filter((u) => u.presenceState !== 'offline').length);
   }
 }, 60000);
 
