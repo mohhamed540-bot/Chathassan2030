@@ -360,7 +360,7 @@ const VINTAGE_STICKERS = [
 ];
 
 // Rich Message Reactions List
-const AVAILABLE_REACTIONS = ['❤️', '😂', '🦅', '���', '🔥', '🌹', '👏', '💎', '☕', '⚔️', '🌙', '💯'];
+const AVAILABLE_REACTIONS = ['❤️', '😂', '🦅', '🥳', '🔥', '🌹', '👏', '💎', '☕', '⚔️', '🌙', '💯'];
 
 // Multi-color Visual Themes Comprehensive Styling Presets (تطبيق كامل للثيم على كافة أجزاء الشات)
 type ThemeId = ThemeDefinition['id'];
@@ -2861,7 +2861,7 @@ export default function App() {
         setFalconAvatarIcon(data.logoUrl);
         try { localStorage.setItem('falcon_avatar_icon', data.logoUrl); } catch {}
       }
-      showToast('📢 تم تطبيق وتعميم الثيم والخط العام على كاف�� الشات من الإدارة', 'info');
+      showToast('📢 تم تطبيق وتعميم الثيم والخط العام على كافة الشات من الإدارة', 'info');
     });
 
     // Role Permissions live listener
@@ -3498,7 +3498,7 @@ export default function App() {
           }).catch(() => {});
         }
 
-        showToast(`رسالة خاصة جديدة من ${pm.fromUsername} ����`, 'info');
+        showToast(`رسالة خاصة جديدة من ${pm.fromUsername} 🔒`, 'info');
       }
     });
 
@@ -3754,7 +3754,7 @@ export default function App() {
       });
 
       if (!isConnectedNow && (!activeSocket || !activeSocket.connected)) {
-        setLoginError('جاري الاتصال بسيرفر الدردشة... يرجى الانتظار ثوانٍ قل��لة حتى يكتمل الاتصال ثم إعادة المحاولة.');
+        setLoginError('جاري الاتصال بسيرفر الدردشة... يرجى الانتظار ثوانٍ قليلة حتى يكتمل الاتصال ثم إعادة المحاولة.');
         setIsSubmitting(false);
         return;
       }
@@ -4146,7 +4146,7 @@ export default function App() {
       callType: incomingCall.callType,
       isInitiator: false
     });
-    showToast(`تم قبول المكالمة المشفرة طر��-إلى-طرف (E2EE 🔒) مع ${incomingCall.fromUser.username}... 📞`, 'success');
+    showToast(`تم قبول المكالمة المشفرة طرف-إلى-طرف (E2EE 🔒) مع ${incomingCall.fromUser.username}... 📞`, 'success');
     setIncomingCall(null);
   };
 
@@ -5214,7 +5214,7 @@ export default function App() {
                   </span>
                 </div>
                 <span className="text-[11px] text-emerald-600 font-bold">
-                  ✓ الدخول التل��ائي: الغرفة العامة
+                  ✓ الدخول التلقائي: الغرفة العامة
                 </span>
               </div>
             </form>
@@ -5503,7 +5503,7 @@ export default function App() {
                   <Volume2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-black text-sm text-amber-200 leading-tight">مركز التنبيهات الصوتية المخصصة 🎵</h3>
+                  <h3 className="font-black text-sm text-amber-200 leading-tight">مركز التنبيهات الصوتية المخصصة</h3>
                   <p className="text-[10px] text-amber-300/80">نغمات فريدة تختلف تلقائياً باختلاف نوع كل حدث</p>
                 </div>
               </div>
@@ -5806,7 +5806,7 @@ export default function App() {
                             showToast('تم تفعيل إشعارات المتصفح بنجاح! 🔔', 'success');
                             sendTestNotification().catch(() => {});
                           } else if (perm === 'denied') {
-                            showToast('تم حظر الإشعارات في إعدادات المتصف��', 'error');
+                            showToast('تم حظر الإشعارات في إعدادات المتصفح', 'error');
                           }
                         });
                       }}
@@ -6546,7 +6546,7 @@ export default function App() {
               <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping flex-shrink-0" />
               <div className="min-w-0">
                 <span className="font-black text-amber-100 block text-[11px] leading-tight">
-                  {connectionState === 'reconnecting' ? 'جاري استعادة جلستك الحالية...' : 'الاتصال معلق (ضع�� شبكة)'}
+                  {connectionState === 'reconnecting' ? 'جاري استعادة جلستك الحالية...' : 'الاتصال معلق (ضعف شبكة)'}
                 </span>
                 <span className="text-[10px] text-amber-100/90 truncate block">
                   جلستك محفوظة تلقائياً دون انقطاع أو تسجيل دخول جديد
@@ -7080,7 +7080,7 @@ export default function App() {
                       type="button"
                       onClick={() => setIsLiveMinimized(true)}
                       className="p-1 rounded-lg bg-black/30 hover:bg-black/50 text-white cursor-pointer transition-colors"
-                      title="تصغير إلى ��افذة عائمة ومتابعة الدردشة"
+                      title="تصغير إلى نافذة عائمة ومتابعة الدردشة"
                     >
                       <Minimize2 className="w-3.5 h-3.5" />
                     </button>
@@ -7903,7 +7903,7 @@ export default function App() {
                               className="max-h-56 max-w-full rounded-xl border border-slate-300 object-cover shadow-sm group-hover:scale-[1.02] transition-transform"
                             />
                             <div className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/60 text-[9px] text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                              🔍 ��كبير وتحميل
+                              🔍 تكبير وتحميل
                             </div>
                           </div>
                         )}
@@ -8615,7 +8615,7 @@ export default function App() {
           )}
         </div>
 
-        {/* BOTTOM TAB BAR: FIXED (Screenshot 2: [⚙ الضبط] [�� الحائط] [👥 الغرف] [💬 خاص] [👤 77]) */}
+        {/* BOTTOM TAB BAR: FIXED (Screenshot 2: [⚙ الضبط] [🧱 الحائط] [👥 الغرف] [💬 خاص] [👤 77]) */}
         <nav
           className={`flex-shrink-0 z-20 ${curTheme.bottomBarBg} ${curTheme.bottomBarText} border-t ${curTheme.bottomBarBorder} text-center text-[11px] font-bold py-1.5 grid grid-cols-5 shadow-2xl`}
         >
@@ -9085,7 +9085,7 @@ export default function App() {
                           ) : u.presenceState === 'offline' ? (
                             <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-slate-400 border-2 border-white" title="غير متصل ⚪" />
                           ) : (
-                            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white shadow-xs" title="متصل بغرفة أ��رى 🟢" />
+                            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white shadow-xs" title="متصل بغرفة أخرى 🟢" />
                           )}
                         </div>
                         <div className="min-w-0 text-right">
@@ -10542,7 +10542,7 @@ export default function App() {
                           }`}
                           title={
                             pmSelfDestructSeconds > 0
-                              ? `مؤقت الاختفاء الذات�� مفعل (${pmSelfDestructSeconds < 60 ? `${pmSelfDestructSeconds}ث` : `${Math.floor(pmSelfDestructSeconds / 60)}د`}) - انقر للتعديل`
+                              ? `مؤقت الاختفاء الذاتية مفعل (${pmSelfDestructSeconds < 60 ? `${pmSelfDestructSeconds}ث` : `${Math.floor(pmSelfDestructSeconds / 60)}د`}) - انقر للتعديل`
                               : 'تفعيل الرسائل ذاتية الاختفاء (Self-destruct) 🔥'
                           }
                         >
@@ -11117,7 +11117,7 @@ export default function App() {
                     }`}
                   >
                     {soundsMuted ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3" />}
-                    <span>{soundsMuted ? 'الأصوات مكتومة' : 'الأصوات م��علة'}</span>
+                    <span>{soundsMuted ? 'الأصوات مكتومة' : 'الأصوات مفعلة'}</span>
                   </button>
                 </div>
 
@@ -11361,7 +11361,7 @@ export default function App() {
               {/* Change Password Form (Screenshot 5: تغيير كلمة المرور) */}
               <button
                 onClick={() => {
-                  const newP = prompt('أدخل كلمة المرور الجد��دة:');
+                  const newP = prompt('أدخل كلمة المرور الجديدة:');
                   if (newP) {
                     setSettingPassword(newP);
                     socket?.emit('updateProfile', { password: newP });
@@ -11631,7 +11631,7 @@ export default function App() {
                     className="w-full py-2.5 px-3 bg-gradient-to-r from-rose-500 via-pink-600 to-rose-500 hover:from-rose-600 hover:to-pink-700 text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 group"
                   >
                     <Heart className="w-4 h-4 fill-white animate-pulse group-hover:scale-125 transition-transform" />
-                    <span>إعجاب بالم��ف الشخصي ❤️ (+1 لايك • مرة بالدقيقة)</span>
+                    <span>إعجاب بالملف الشخصي ❤️ (+1 لايك • مرة بالدقيقة)</span>
                   </button>
                 </div>
               )}
@@ -11873,7 +11873,7 @@ export default function App() {
                           <button
                             onClick={() => {
                               const r = prompt('سبب الطرد من الشات:');
-                              if (r !== null) handleAdminAction('kick', profileTargetUser.username, undefined, r || 'مخالف�� القوانين');
+                              if (r !== null) handleAdminAction('kick', profileTargetUser.username, undefined, r || 'مخالفة القوانين');
                             }}
                             className="p-2 rounded bg-rose-100 hover:bg-rose-200 border border-rose-300 text-rose-700 flex items-center justify-center gap-1"
                           >
@@ -12967,7 +12967,7 @@ export default function App() {
                     value={currentRoomSettingsForm.welcomeMessage}
                     onChange={(e) => setCurrentRoomSettingsForm({ ...currentRoomSettingsForm, welcomeMessage: e.target.value })}
                     className="w-full p-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs outline-none focus:border-emerald-500 resize-none font-medium"
-                    placeholder="مثال: أهلاً بكم في غرفتنا.. نتمنى لكم أسعد ا��أوقات والالتزام بالاحترام المتبادل 🌹"
+                    placeholder="مثال: أهلاً بكم في غرفتنا.. نتمنى لكم أسعد الأوقات والالتزام بالاحترام المتبادل 🌹"
                   />
                 </div>
 
@@ -13796,7 +13796,7 @@ export default function App() {
                     <Activity className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-white">حال�� الاتصال والجلسة</h3>
+                    <h3 className="font-bold text-sm text-white">حالة الاتصال والجلسة</h3>
                     <p className="text-[10px] text-amber-300/70">مراقبة الجلسة اللحظية وسرعة الخادم</p>
                   </div>
                 </div>
