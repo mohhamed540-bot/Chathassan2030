@@ -2822,18 +2822,20 @@ io.on('connection', (socket) => {
     if (state === 'online') {
       user.lastActiveTime = Date.now();
     }
-    if (state === 'offline') {
-      if (user.micSlot !== null) {
-        const slots = getMicSlotsForRoom(user.room);
-        const slot = slots.find((s) => s.slotNumber === user.micSlot);
-        if (slot) slot.user = null;
-        io.to(user.room).emit('micSlotsUpdated', slots);
-      }
-      const idx = users.findIndex((u) => u.id === user.id);
-      if (idx !== -1) users.splice(idx, 1);
+    if (state === 'offline' && user.micSlot !== null) {
+      const slots = getMicSlotsForRoom(user.room);
+      const slot = slots.find((s) => s.slotNumber === user.micSlot);
+      if (slot) slot.user = null;
+      user.micSlot = null;
+      user.isVoice = false;
+      io.to(user.room).emit('micSlotsUpdated', slots);
     }
 
+    // Keep the authenticated user record in `users` while the socket/session
+    // remains alive. Removing it here made a later online state impossible to
+    // publish and caused members in other rooms to appear offline.
     io.emit('userPresenceUpdated', { userId: user.id, username: user.username, state });
+    io.emit('allUsers', users);
     io.to(user.room).emit('roomUsers', {
       room: user.room,
       users: users.filter((u) => u.room === user.room)
@@ -3795,7 +3797,7 @@ io.on('connection', (socket) => {
             timestamp: Date.now()
           };
           io.to(target.room).emit('message', alertMsg);
-          socket.emit('systemAlert', `تم سحب المايك من ${target.username} بنجاح.`);
+          socket.emit('systemAlert', `تم سح�� المايك من ${target.username} بنجاح.`);
         }
         break;
       }
