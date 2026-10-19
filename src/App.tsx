@@ -1542,7 +1542,7 @@ export default function App() {
   } | null>(null);
   const [showRevealedNicksModal, setShowRevealedNicksModal] = useState(false);
 
-  // Unread Wall Posts Counter State (عداد رسائل ومنشورات الحائط ����لجديدة)
+  // Unread Wall Posts Counter State (عداد رسائل ومنشورات الحائط ������لجديدة)
   const [unreadWallCount, setUnreadWallCount] = useState<number>(0);
   const lastSeenWallTimeRef = useRef<number>(Date.now());
 
@@ -3000,12 +3000,17 @@ export default function App() {
           ? prev.filter((u) => u.username !== username)
           : prev.map((u) => (u.username === username ? { ...u, presenceState: state } : u))
       );
-      setAllConnectedUsers((prev) =>
-        state === 'offline'
-          ? prev.filter((u) => u.username !== username)
-          : prev.map((u) => (u.username === username ? { ...u, presenceState: state } : u))
-      );
-      if (currentUserRef.current && currentUserRef.current.username.toLowerCase() === username.toLowerCase()) {
+  setAllConnectedUsers((prev) =>
+  state === 'offline'
+  ? prev.filter((u) => u.username.toLowerCase() !== username.toLowerCase())
+  : prev.map((u) => (u.username.toLowerCase() === username.toLowerCase() ? { ...u, presenceState: state } : u))
+  );
+  setAllRegisteredMembers((prev) => prev.map((member) =>
+  member.username.toLowerCase() === username.toLowerCase()
+  ? { ...member, isOnline: state !== 'offline', presenceState: state, currentRoom: member.currentRoom }
+  : member
+  ));
+  if (currentUserRef.current && currentUserRef.current.username.toLowerCase() === username.toLowerCase()) {
         setCurrentUser((prev) => (prev ? { ...prev, presenceState: state } : null));
       }
     });
@@ -3618,7 +3623,7 @@ export default function App() {
     s.on('pmCallEnded', () => {
       setActiveCall(null);
       setIncomingCall(null);
-      showToast('انتهت المكالمة الخاصة 📞', 'info');
+      showToast('انتهت المك��لمة الخاصة 📞', 'info');
     });
 
     setSocket(s);
@@ -6033,7 +6038,7 @@ export default function App() {
                   </span>
                 </div>
                 <p className="text-[10px] text-indigo-800/80">
-                  جميع الأسماء والنكات التي دخل بها هذا الجهاز وسجلت عبر نفس عنوان الإنترنت:
+                  جميع ال��سماء والنكات التي دخل بها هذا الجهاز وسجلت عبر نفس عنوان الإنترنت:
                 </p>
 
                 {/* Nicknames list */}
@@ -6650,7 +6655,7 @@ export default function App() {
             <div className="flex items-center gap-2">
               <span className="text-xl animate-bounce">🚨</span>
               <div>
-                <span className="text-yellow-200 block text-[10px]">تنبيه وإنذار إداري عاجل من {activeAdminSiren.from}:</span>
+                <span className="text-yellow-200 block text-[10px]">��نبيه وإنذار إداري عاجل من {activeAdminSiren.from}:</span>
                 <span className="text-xs">{activeAdminSiren.message}</span>
               </div>
             </div>
@@ -8009,7 +8014,7 @@ export default function App() {
                   </div>
                 )}
 
-                {/* TAB 2: STICKERS (الملصقات التعبيرية بالشات) */}
+                {/* TAB 2: STICKERS (الملصقات ا��تعبيرية بالشات) */}
                 {emojiPickerTab === 'stickers' && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-[10px] text-slate-400 px-1">
@@ -8663,7 +8668,7 @@ export default function App() {
                     />
                     {hasUnread && (
                       <span
-                        title={`رسائل خاصة غير مقروءة: ${totalUnreadPmCount} (من ${unreadSendersCount} شخص)`}
+                        title={`رسائل خا��ة غير مقروءة: ${totalUnreadPmCount} (من ${unreadSendersCount} شخص)`}
                         className="absolute -top-2.5 -right-3.5 z-20 min-w-[19px] h-[19px] px-1 rounded-full bg-rose-600 text-white text-[10px] font-black flex items-center justify-center border-2 border-amber-300 shadow-[0_0_12px_rgba(225,29,72,0.95)] animate-bounce"
                       >
                         {totalUnreadPmCount > 99 ? '99+' : totalUnreadPmCount}
@@ -11012,7 +11017,7 @@ export default function App() {
                 {/* Upload from Device / Phone */}
                 <label className="w-full py-1.5 px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-sm transition-all">
                   <Camera className="w-3.5 h-3.5" />
-                  <span>اختيار صورة من هاتفك أو جهازك 📁</span>
+                  <span>اختيار صورة من هاتفك أو جهازك ��</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -12924,7 +12929,7 @@ export default function App() {
                     value={currentRoomSettingsForm.welcomeMessage}
                     onChange={(e) => setCurrentRoomSettingsForm({ ...currentRoomSettingsForm, welcomeMessage: e.target.value })}
                     className="w-full p-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs outline-none focus:border-emerald-500 resize-none font-medium"
-                    placeholder="مثال: أهلاً بكم في غرفتنا.. نتمنى لكم أسعد الأوقات والالتزام بالاحترام المتبادل 🌹"
+                    placeholder="مثال: أهلاً بكم في غرفتن��.. نتمنى لكم أسعد الأوقات والالتزام بالاحترام المتبادل 🌹"
                   />
                 </div>
 
@@ -13486,7 +13491,7 @@ export default function App() {
                 {storyMediaType === 'video' ? (
                   <video src={storyMediaUrl} controls autoPlay muted playsInline className="max-h-[45vh] w-full object-contain" />
                 ) : (
-                  <img src={storyMediaUrl} alt="معاينة الخاطرة" className="max-h-[45vh] w-full object-contain" />
+                  <img src={storyMediaUrl} alt="معاينة ال��اطرة" className="max-h-[45vh] w-full object-contain" />
                 )}
               </div>
 
