@@ -1542,7 +1542,7 @@ export default function App() {
   } | null>(null);
   const [showRevealedNicksModal, setShowRevealedNicksModal] = useState(false);
 
-  // Unread Wall Posts Counter State (عداد رسائل ومنشورات الحائط الجديدة)
+  // Unread Wall Posts Counter State (عداد رسائل ومنشورات الحائط ��لجديدة)
   const [unreadWallCount, setUnreadWallCount] = useState<number>(0);
   const lastSeenWallTimeRef = useRef<number>(Date.now());
 
@@ -1874,7 +1874,9 @@ export default function App() {
       return false;
     }
   });
-  const [activeTheme, setActiveTheme] = useState<string>('golden-brown-harmony');
+  // These are only first-paint fallbacks. The persisted admin values arrive from
+  // the server's globalAppearance payload and replace them before the app is shown.
+  const [activeTheme, setActiveTheme] = useState<string>('dark-gold');
   const [pinnedTopic, setPinnedTopic] = useState<string>('🦅 مرحباً بكم في شات حسان برو ملتقى الأحبة والأصالة • نرجو الالتزام بآداب الحوار');
   const [userMood, setUserMood] = useState<string>(() => {
     try {
@@ -1919,27 +1921,9 @@ export default function App() {
   const [showIdentityStudio, setShowIdentityStudio] = useState<boolean>(false);
   const [showThemesModal, setShowThemesModal] = useState<boolean>(false);
   const [showDiagnosticsModal, setShowDiagnosticsModal] = useState<boolean>(false);
-  const [activeWallpaper, setActiveWallpaper] = useState<string>(() => {
-    try {
-      return localStorage.getItem('soqoor_wallpaper') || 'default';
-    } catch {
-      return 'default';
-    }
-  });
-  const [fontFamily, setFontFamily] = useState<string>(() => {
-    try {
-      return localStorage.getItem('soqoor_font') || 'Noto Naskh Arabic';
-    } catch {
-      return 'Noto Naskh Arabic';
-    }
-  });
-  const [bubbleStyle, setBubbleStyle] = useState<string>(() => {
-    try {
-      return localStorage.getItem('soqoor_bubble_style') || 'modern';
-    } catch {
-      return 'modern';
-    }
-  });
+  const [activeWallpaper, setActiveWallpaper] = useState<string>('default');
+  const [fontFamily, setFontFamily] = useState<string>('Cairo');
+  const [bubbleStyle, setBubbleStyle] = useState<string>('modern');
   const curTheme = THEME_STYLES[activeTheme] || THEME_STYLES['golden-brown-harmony'];
   const [nameGradient, setNameGradient] = useState<string>(() => {
     try {
@@ -3211,46 +3195,23 @@ export default function App() {
       const persistentNameColor = user.nameColor || localStorage.getItem('soqoor_name_color') || '#d97706';
       const persistentTextColor = user.textColor || localStorage.getItem('soqoor_text_color') || '#0f172a';
       const persistentNameGradient = user.nameGradient || localStorage.getItem('soqoor_name_gradient') || 'from-amber-400 to-yellow-200';
-      const persistentTheme = activeTheme;
-      const persistentFont = (user as any).fontFamily || localStorage.getItem('soqoor_font') || 'Noto Naskh Arabic';
-      const persistentFontSize = (user as any).fontSize || localStorage.getItem('soqoor_chat_font_size') || 'base';
-      const persistentWallpaper = (user as any).wallpaper || localStorage.getItem('soqoor_wallpaper') || 'default';
-      const persistentBubble = (user as any).bubbleStyle || localStorage.getItem('soqoor_bubble_style') || 'modern';
-
+      // Member colors are personal and persist with the account. Theme, font,
+      // wallpaper, and bubble style are global admin settings and are managed
+      // only by the globalAppearance events, never by login/session restoration.
       setSettingNameColor(persistentNameColor);
       setSettingTextColor(persistentTextColor);
       setNameGradient(persistentNameGradient);
-      setActiveTheme(persistentTheme);
-      setFontFamily(persistentFont);
-      setChatFontSize(persistentFontSize);
-      setActiveWallpaper(persistentWallpaper);
-      setBubbleStyle(persistentBubble);
 
       try {
         localStorage.setItem('soqoor_name_color', persistentNameColor);
         localStorage.setItem('soqoor_text_color', persistentTextColor);
         localStorage.setItem('soqoor_name_gradient', persistentNameGradient);
-        localStorage.setItem('soqoor_theme', persistentTheme);
-        localStorage.setItem('soqoor_font', persistentFont);
-        localStorage.setItem('soqoor_chat_font_size', persistentFontSize);
-        localStorage.setItem('soqoor_wallpaper', persistentWallpaper);
-        localStorage.setItem('soqoor_bubble_style', persistentBubble);
       } catch {}
 
-      // Inform server of these choices
       s.emit('updateUserStyle', {
         nameColor: persistentNameColor,
         textColor: persistentTextColor,
         nameGradient: persistentNameGradient
-      });
-      s.emit('updateUserPreferences', {
-        theme: persistentTheme,
-        fontFamily: persistentFont,
-        fontSize: persistentFontSize,
-        wallpaper: persistentWallpaper,
-        bubbleStyle: persistentBubble,
-        nameColor: persistentNameColor,
-        textColor: persistentTextColor
       });
 
       setIsSubmitting(false);
@@ -3281,30 +3242,16 @@ export default function App() {
       const persistentNameColor = user.nameColor || localStorage.getItem('soqoor_name_color') || '#d97706';
       const persistentTextColor = user.textColor || localStorage.getItem('soqoor_text_color') || '#0f172a';
       const persistentNameGradient = user.nameGradient || localStorage.getItem('soqoor_name_gradient') || 'from-amber-400 to-yellow-200';
-      const persistentTheme = activeTheme;
-      const persistentFont = (user as any).fontFamily || localStorage.getItem('soqoor_font') || 'Noto Naskh Arabic';
-      const persistentFontSize = (user as any).fontSize || localStorage.getItem('soqoor_chat_font_size') || 'base';
-      const persistentWallpaper = (user as any).wallpaper || localStorage.getItem('soqoor_wallpaper') || 'default';
-      const persistentBubble = (user as any).bubbleStyle || localStorage.getItem('soqoor_bubble_style') || 'modern';
-
+      // Session restoration must not reapply member or browser appearance defaults.
+      // The admin-controlled appearance remains owned by globalAppearance events.
       setSettingNameColor(persistentNameColor);
       setSettingTextColor(persistentTextColor);
       setNameGradient(persistentNameGradient);
-      setActiveTheme(persistentTheme);
-      setFontFamily(persistentFont);
-      setChatFontSize(persistentFontSize);
-      setActiveWallpaper(persistentWallpaper);
-      setBubbleStyle(persistentBubble);
 
       try {
         localStorage.setItem('soqoor_name_color', persistentNameColor);
         localStorage.setItem('soqoor_text_color', persistentTextColor);
         localStorage.setItem('soqoor_name_gradient', persistentNameGradient);
-        localStorage.setItem('soqoor_theme', persistentTheme);
-        localStorage.setItem('soqoor_font', persistentFont);
-        localStorage.setItem('soqoor_chat_font_size', persistentFontSize);
-        localStorage.setItem('soqoor_wallpaper', persistentWallpaper);
-        localStorage.setItem('soqoor_bubble_style', persistentBubble);
       } catch {}
 
       setIsSubmitting(false);
@@ -4217,25 +4164,9 @@ export default function App() {
   localStorage.setItem('soqoor_theme_user_set', 'true');
   } catch {}
 
-  const selectedStyle = THEME_STYLES[themeId];
-    if (selectedStyle?.recommendedTextColor) {
-      setSettingTextColor(selectedStyle.recommendedTextColor);
-      try {
-        localStorage.setItem('soqoor_text_color', selectedStyle.recommendedTextColor);
-      } catch {}
-      if (selectedStyle.recommendedNameColor) {
-        setSettingNameColor(selectedStyle.recommendedNameColor);
-        try {
-          localStorage.setItem('soqoor_name_color', selectedStyle.recommendedNameColor);
-        } catch {}
-      }
-      setCurrentUser((prev) => (prev ? {
-        ...prev,
-        theme: themeId,
-        textColor: selectedStyle.recommendedTextColor,
-        nameColor: selectedStyle.recommendedNameColor || prev.nameColor
-      } : null));
-    }
+    // A theme changes the chat surface only. Member name/message colors are
+    // personal account settings and must never be overwritten by the admin theme.
+    setCurrentUser((prev) => (prev ? { ...prev, theme: themeId } : null));
 
     // Broadcast globally to all chat members if Admin or Super
     if (currentUser?.role === 'admin' || currentUser?.role === 'super') {
@@ -4487,7 +4418,7 @@ export default function App() {
     const deaf = audioManager.toggleDeafen();
     setIsSpeakerMuted(deaf);
     sounds.playToggleMute(deaf);
-    showToast(deaf ? 'تم كتم صوت الغرفة بالكامل 🔇' : 'تم تشغيل صوت الغرفة 🔊', 'info');
+    showToast(deaf ? '��م كتم صوت الغرفة بالكامل 🔇' : 'تم تشغيل صوت الغرفة 🔊', 'info');
   };
 
   // Admin Actions Dispatcher with Permission Checks
@@ -8325,7 +8256,7 @@ export default function App() {
                 isPoetryMode={isPoetryMode}
                 onTogglePoetryMode={() => {
                   setIsPoetryMode(!isPoetryMode);
-                  showToast(!isPoetryMode ? 'تم تفعيل وضع القصائد: اكتب الشطر الأول ثم | ثم الشطر الثاني' : 'تم تعطيل وضع القصائد', 'info');
+                  showToast(!isPoetryMode ? 'تم تفعيل وضع القصائد: اكتب الشطر الأول ث�� | ثم الشطر الثاني' : 'تم تعطيل وضع القصائد', 'info');
                 }}
                 onShowToast={showToast}
               />
@@ -8669,7 +8600,7 @@ export default function App() {
               />
               {unreadWallCount > 0 && (
                 <span
-                  title={`منشورات ورسائل حائط جديدة: ${unreadWallCount}`}
+                  title={`منشورات ورسائل ح��ئط جديدة: ${unreadWallCount}`}
                   className="absolute -top-2.5 -right-3.5 z-20 min-w-[18px] h-[18px] px-1 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center border-2 border-emerald-300 shadow-[0_0_12px_rgba(5,150,105,0.9)] animate-bounce"
                 >
                   {unreadWallCount > 99 ? '99+' : unreadWallCount}
@@ -8970,7 +8901,7 @@ export default function App() {
 
               return (
                 <div className="flex-1 overflow-y-auto divide-y divide-slate-800/40">
-                  {/* Header: متواجدون بنفس الغرفة */}
+                  {/* Header: ��تواجدون بنفس الغرفة */}
                   <div className={`${curTheme.subHeaderBg} ${curTheme.accentText} text-xs font-bold px-3 py-1.5 flex items-center justify-between border-b ${curTheme.subHeaderBorder}`}>
                     <span>المتواجدون معك في الغرفة الحالية ({currentRoomUsers.length})</span>
                     <span className="text-[10px] text-emerald-400 font-normal">● متصلون الآن</span>
@@ -10363,7 +10294,7 @@ export default function App() {
                                   });
                                 }}
                                 className="mt-1.5 cursor-pointer relative group rounded-lg overflow-hidden border border-slate-300 max-h-48"
-                                title="انقر لعرض وتكبير وتحميل الوسائط"
+                                title="انقر لعرض وتكبي�� وتحميل الوسائط"
                               >
                                 {pm.mediaUrl.startsWith('data:video') || pm.mediaUrl.endsWith('.mp4') || pm.mediaUrl.endsWith('.webm') ? (
                                   <div className="relative bg-black max-h-48 w-full flex items-center justify-center">
@@ -13373,7 +13304,7 @@ export default function App() {
 
                 {emblemsConfig.items.filter((i) => i.type === 'banner').length === 0 ? (
                   <div className="py-8 text-center text-slate-400 space-y-2">
-                    <p className="text-xs">لا توجد بنرات مرفوعة حالياً في النظام.</p>
+                    <p className="text-xs">لا توجد بنرا�� مرفوعة حالياً في النظام.</p>
                     <p className="text-[11px] text-slate-500">
                       يمكنك رفع بنرات جديدة من تبويب (الرموز) في لوحة التحكم الإدارية.
                     </p>
