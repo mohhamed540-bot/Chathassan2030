@@ -50,12 +50,12 @@
     "bubbleStyle": "modern",
     "fontSize": "base",
     "engagement": {
-      "activeTimeMinutes": 39,
+      "activeTimeMinutes": 61,
       "messagesSent": 0,
       "wallPostsCount": 0,
       "micTimeMinutes": 0,
-      "starsLevel": 0.7,
-      "progressPercent": 65
+      "starsLevel": 1,
+      "progressPercent": 1
     }
   }
 }

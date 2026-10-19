@@ -97,6 +97,7 @@ import { AudioEqualizerAndEffects } from './components/AudioEqualizerAndEffects'
 import { InteractiveGamesSuite } from './components/InteractiveGamesSuite';
 import { IdentityProfileStudio } from './components/IdentityProfileStudio';
 import { ThemeAndWallpaperCenter, THEMES_LIST, WALLPAPERS_LIST, FONTS_LIST } from './components/ThemeAndWallpaperCenter';
+import type { ThemeDefinition } from './components/ThemeAndWallpaperCenter';
 import { SystemDiagnosticsModal } from './components/SystemDiagnosticsModal';
 import { ChatPowerToolsBar } from './components/ChatPowerToolsBar';
 import { UltimateMegaFeatures50 } from './components/UltimateMegaFeatures50';
@@ -362,6 +363,8 @@ const VINTAGE_STICKERS = [
 const AVAILABLE_REACTIONS = ['❤️', '😂', '🦅', '🥳', '🔥', '🌹', '👏', '💎', '☕', '⚔️', '🌙', '💯'];
 
 // Multi-color Visual Themes Comprehensive Styling Presets (تطبيق كامل للثيم على كافة أجزاء الشات)
+type ThemeId = ThemeDefinition['id'];
+
 export interface ThemeFullStyle {
   headerBg: string;
   headerBorder: string;
@@ -395,7 +398,7 @@ export interface ThemeFullStyle {
   recommendedNameColor?: string;
 }
 
-const THEME_STYLES: Record<string, ThemeFullStyle> = {
+const THEME_STYLES: Record<ThemeId, ThemeFullStyle> = {
   // 📄 1. الثيم الرسمي الفاتح (خلفيات ناصعة + خطوط سوداء فاحمة عالية التباين)
   'official-pure-light': {
     headerBg: 'bg-white',
@@ -1871,13 +1874,7 @@ export default function App() {
       return false;
     }
   });
-  const [activeTheme, setActiveTheme] = useState<string>(() => {
-    try {
-      return localStorage.getItem('soqoor_theme') || 'golden-brown-harmony';
-    } catch {
-      return 'golden-brown-harmony';
-    }
-  });
+  const [activeTheme, setActiveTheme] = useState<string>('golden-brown-harmony');
   const [pinnedTopic, setPinnedTopic] = useState<string>('🦅 مرحباً بكم في شات حسان برو ملتقى الأحبة والأصالة • نرجو الالتزام بآداب الحوار');
   const [userMood, setUserMood] = useState<string>(() => {
     try {
@@ -3201,7 +3198,7 @@ export default function App() {
       const persistentNameColor = user.nameColor || localStorage.getItem('soqoor_name_color') || '#d97706';
       const persistentTextColor = user.textColor || localStorage.getItem('soqoor_text_color') || '#0f172a';
       const persistentNameGradient = user.nameGradient || localStorage.getItem('soqoor_name_gradient') || 'from-amber-400 to-yellow-200';
-      const persistentTheme = (user as any).theme || localStorage.getItem('soqoor_theme') || 'golden-brown-harmony';
+      const persistentTheme = activeTheme;
       const persistentFont = (user as any).fontFamily || localStorage.getItem('soqoor_font') || 'Noto Naskh Arabic';
       const persistentFontSize = (user as any).fontSize || localStorage.getItem('soqoor_chat_font_size') || 'base';
       const persistentWallpaper = (user as any).wallpaper || localStorage.getItem('soqoor_wallpaper') || 'default';
@@ -3271,7 +3268,7 @@ export default function App() {
       const persistentNameColor = user.nameColor || localStorage.getItem('soqoor_name_color') || '#d97706';
       const persistentTextColor = user.textColor || localStorage.getItem('soqoor_text_color') || '#0f172a';
       const persistentNameGradient = user.nameGradient || localStorage.getItem('soqoor_name_gradient') || 'from-amber-400 to-yellow-200';
-      const persistentTheme = (user as any).theme || localStorage.getItem('soqoor_theme') || 'golden-brown-harmony';
+      const persistentTheme = activeTheme;
       const persistentFont = (user as any).fontFamily || localStorage.getItem('soqoor_font') || 'Noto Naskh Arabic';
       const persistentFontSize = (user as any).fontSize || localStorage.getItem('soqoor_chat_font_size') || 'base';
       const persistentWallpaper = (user as any).wallpaper || localStorage.getItem('soqoor_wallpaper') || 'default';
@@ -3501,7 +3498,7 @@ export default function App() {
           }).catch(() => {});
         }
 
-        showToast(`رسالة خاصة جديدة من ${pm.fromUsername} 💬`, 'info');
+        showToast(`رسالة خاصة جديدة من ${pm.fromUsername} 🔒`, 'info');
       }
     });
 
@@ -4195,13 +4192,19 @@ export default function App() {
 
   // Unified Appearance & Styling Preference Updaters (حفظ دائم واستمرارية أسبوعية حتى بعد الخروج والعودة)
   const handleUpdateTheme = (themeId: string) => {
-    setActiveTheme(themeId);
-    try {
-      localStorage.setItem('soqoor_theme', themeId);
-      localStorage.setItem('soqoor_theme_user_set', 'true');
-    } catch {}
+  const canControlTheme = currentUser?.role === 'admin' || currentUser?.role === 'super';
+  if (!canControlTheme) {
+  showToast('الثيم العام يحدده مدير النظام فقط.', 'info');
+  return;
+  }
 
-    const selectedStyle = THEME_STYLES[themeId];
+  setActiveTheme(themeId);
+  try {
+  localStorage.setItem('soqoor_theme', themeId);
+  localStorage.setItem('soqoor_theme_user_set', 'true');
+  } catch {}
+
+  const selectedStyle = THEME_STYLES[themeId];
     if (selectedStyle?.recommendedTextColor) {
       setSettingTextColor(selectedStyle.recommendedTextColor);
       try {
@@ -5211,7 +5214,7 @@ export default function App() {
                   </span>
                 </div>
                 <span className="text-[11px] text-emerald-600 font-bold">
-                  ✓ الدخول التل��ائي: الغرفة العامة
+                  ✓ الدخول التلقائي: الغرفة العامة
                 </span>
               </div>
             </form>
@@ -5500,7 +5503,7 @@ export default function App() {
                   <Volume2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-black text-sm text-amber-200 leading-tight">مركز التنبيهات الصوتية المخصصة 🎵</h3>
+                  <h3 className="font-black text-sm text-amber-200 leading-tight">مركز التنبيهات الصوتية المخصصة</h3>
                   <p className="text-[10px] text-amber-300/80">نغمات فريدة تختلف تلقائياً باختلاف نوع كل حدث</p>
                 </div>
               </div>
@@ -5803,7 +5806,7 @@ export default function App() {
                             showToast('تم تفعيل إشعارات المتصفح بنجاح! 🔔', 'success');
                             sendTestNotification().catch(() => {});
                           } else if (perm === 'denied') {
-                            showToast('تم حظر الإشعارات في إعدادات المتصف��', 'error');
+                            showToast('تم حظر الإشعارات في إعدادات المتصفح', 'error');
                           }
                         });
                       }}
@@ -7900,7 +7903,7 @@ export default function App() {
                               className="max-h-56 max-w-full rounded-xl border border-slate-300 object-cover shadow-sm group-hover:scale-[1.02] transition-transform"
                             />
                             <div className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/60 text-[9px] text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                              🔍 ��كبير وتحميل
+                              🔍 تكبير وتحميل
                             </div>
                           </div>
                         )}
@@ -8612,7 +8615,7 @@ export default function App() {
           )}
         </div>
 
-        {/* BOTTOM TAB BAR: FIXED (Screenshot 2: [⚙ الضبط] [💬 الحائط] [👥 الغرف] [💬 خاص] [👤 77]) */}
+        {/* BOTTOM TAB BAR: FIXED (Screenshot 2: [⚙ الضبط] [🧱 الحائط] [👥 الغرف] [💬 خاص] [👤 77]) */}
         <nav
           className={`flex-shrink-0 z-20 ${curTheme.bottomBarBg} ${curTheme.bottomBarText} border-t ${curTheme.bottomBarBorder} text-center text-[11px] font-bold py-1.5 grid grid-cols-5 shadow-2xl`}
         >
@@ -8935,8 +8938,14 @@ export default function App() {
               const otherConnectedUsers = sortByRole(allConnectedUsers.filter(
                 (u) =>
                   u.room.toLowerCase() !== currentUser.room.toLowerCase() &&
+                  u.presenceState !== 'offline' &&
                   u.username.toLowerCase().includes(searchUserQuery.toLowerCase())
-              ));
+              )).sort((a, b) => {
+                const presenceRank = (presence?: User['presenceState']) =>
+                  presence === 'online' ? 2 : presence === 'away' ? 1 : 0;
+                return presenceRank(b.presenceState) - presenceRank(a.presenceState)
+                  || a.username.localeCompare(b.username, 'ar');
+              });
 
               const offlineMembers = sortByRole(allRegisteredMembers.filter(
                 (m) =>
@@ -10533,7 +10542,7 @@ export default function App() {
                           }`}
                           title={
                             pmSelfDestructSeconds > 0
-                              ? `مؤقت الاختفاء الذاتي مفعل (${pmSelfDestructSeconds < 60 ? `${pmSelfDestructSeconds}ث` : `${Math.floor(pmSelfDestructSeconds / 60)}د`}) - انقر للتعديل`
+                              ? `مؤقت الاختفاء الذاتية مفعل (${pmSelfDestructSeconds < 60 ? `${pmSelfDestructSeconds}ث` : `${Math.floor(pmSelfDestructSeconds / 60)}د`}) - انقر للتعديل`
                               : 'تفعيل الرسائل ذاتية الاختفاء (Self-destruct) 🔥'
                           }
                         >
@@ -11622,7 +11631,7 @@ export default function App() {
                     className="w-full py-2.5 px-3 bg-gradient-to-r from-rose-500 via-pink-600 to-rose-500 hover:from-rose-600 hover:to-pink-700 text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 group"
                   >
                     <Heart className="w-4 h-4 fill-white animate-pulse group-hover:scale-125 transition-transform" />
-                    <span>إعجاب بالم��ف الشخصي ❤️ (+1 لايك • مرة بالدقيقة)</span>
+                    <span>إعجاب بالملف الشخصي ❤️ (+1 لايك • مرة بالدقيقة)</span>
                   </button>
                 </div>
               )}
@@ -13787,7 +13796,7 @@ export default function App() {
                     <Activity className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-white">حال�� الاتصال والجلسة</h3>
+                    <h3 className="font-bold text-sm text-white">حالة الاتصال والجلسة</h3>
                     <p className="text-[10px] text-amber-300/70">مراقبة الجلسة اللحظية وسرعة الخادم</p>
                   </div>
                 </div>
