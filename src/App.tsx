@@ -359,7 +359,7 @@ const VINTAGE_STICKERS = [
 ];
 
 // Rich Message Reactions List
-const AVAILABLE_REACTIONS = ['❤️', '😂', '🦅', '🥳', '🔥', '🌹', '👏', '💎', '☕', '⚔️', '🌙', '💯'];
+const AVAILABLE_REACTIONS = ['❤️', '😂', '🦅', '��', '🔥', '🌹', '👏', '💎', '☕', '⚔️', '🌙', '💯'];
 
 // Multi-color Visual Themes Comprehensive Styling Presets (تطبيق كامل للثيم على كافة أجزاء الشات)
 export interface ThemeFullStyle {
@@ -3501,7 +3501,7 @@ export default function App() {
           }).catch(() => {});
         }
 
-        showToast(`رسالة خاصة جديدة من ${pm.fromUsername} 💬`, 'info');
+        showToast(`رسالة خاصة جديدة من ${pm.fromUsername} ����`, 'info');
       }
     });
 
@@ -4149,7 +4149,7 @@ export default function App() {
       callType: incomingCall.callType,
       isInitiator: false
     });
-    showToast(`تم قبول المكالمة المشفرة طرف-إلى-طرف (E2EE 🔒) مع ${incomingCall.fromUser.username}... 📞`, 'success');
+    showToast(`تم قبول المكالمة المشفرة طر��-إلى-طرف (E2EE 🔒) مع ${incomingCall.fromUser.username}... 📞`, 'success');
     setIncomingCall(null);
   };
 
@@ -6543,7 +6543,7 @@ export default function App() {
               <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping flex-shrink-0" />
               <div className="min-w-0">
                 <span className="font-black text-amber-100 block text-[11px] leading-tight">
-                  {connectionState === 'reconnecting' ? 'جاري استعادة جلستك الحالية...' : 'الاتصال معلق (ضعف شبكة)'}
+                  {connectionState === 'reconnecting' ? 'جاري استعادة جلستك الحالية...' : 'الاتصال معلق (ضع�� شبكة)'}
                 </span>
                 <span className="text-[10px] text-amber-100/90 truncate block">
                   جلستك محفوظة تلقائياً دون انقطاع أو تسجيل دخول جديد
@@ -7077,7 +7077,7 @@ export default function App() {
                       type="button"
                       onClick={() => setIsLiveMinimized(true)}
                       className="p-1 rounded-lg bg-black/30 hover:bg-black/50 text-white cursor-pointer transition-colors"
-                      title="تصغير إلى نافذة عائمة ومتابعة الدردشة"
+                      title="تصغير إلى ��افذة عائمة ومتابعة الدردشة"
                     >
                       <Minimize2 className="w-3.5 h-3.5" />
                     </button>
@@ -8612,7 +8612,7 @@ export default function App() {
           )}
         </div>
 
-        {/* BOTTOM TAB BAR: FIXED (Screenshot 2: [⚙ الضبط] [💬 الحائط] [👥 الغرف] [💬 خاص] [👤 77]) */}
+        {/* BOTTOM TAB BAR: FIXED (Screenshot 2: [⚙ الضبط] [�� الحائط] [👥 الغرف] [💬 خاص] [👤 77]) */}
         <nav
           className={`flex-shrink-0 z-20 ${curTheme.bottomBarBg} ${curTheme.bottomBarText} border-t ${curTheme.bottomBarBorder} text-center text-[11px] font-bold py-1.5 grid grid-cols-5 shadow-2xl`}
         >
@@ -8935,8 +8935,14 @@ export default function App() {
               const otherConnectedUsers = sortByRole(allConnectedUsers.filter(
                 (u) =>
                   u.room.toLowerCase() !== currentUser.room.toLowerCase() &&
+                  u.presenceState !== 'offline' &&
                   u.username.toLowerCase().includes(searchUserQuery.toLowerCase())
-              ));
+              )).sort((a, b) => {
+                const presenceRank = (presence?: User['presenceState']) =>
+                  presence === 'online' ? 2 : presence === 'away' ? 1 : 0;
+                return presenceRank(b.presenceState) - presenceRank(a.presenceState)
+                  || a.username.localeCompare(b.username, 'ar');
+              });
 
               const offlineMembers = sortByRole(allRegisteredMembers.filter(
                 (m) =>
@@ -11352,7 +11358,7 @@ export default function App() {
               {/* Change Password Form (Screenshot 5: تغيير كلمة المرور) */}
               <button
                 onClick={() => {
-                  const newP = prompt('أدخل كلمة المرور الجديدة:');
+                  const newP = prompt('أدخل كلمة المرور الجد��دة:');
                   if (newP) {
                     setSettingPassword(newP);
                     socket?.emit('updateProfile', { password: newP });
@@ -11864,7 +11870,7 @@ export default function App() {
                           <button
                             onClick={() => {
                               const r = prompt('سبب الطرد من الشات:');
-                              if (r !== null) handleAdminAction('kick', profileTargetUser.username, undefined, r || 'مخالفة القوانين');
+                              if (r !== null) handleAdminAction('kick', profileTargetUser.username, undefined, r || 'مخالف�� القوانين');
                             }}
                             className="p-2 rounded bg-rose-100 hover:bg-rose-200 border border-rose-300 text-rose-700 flex items-center justify-center gap-1"
                           >
