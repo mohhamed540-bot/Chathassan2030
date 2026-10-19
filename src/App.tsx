@@ -1874,13 +1874,7 @@ export default function App() {
       return false;
     }
   });
-  const [activeTheme, setActiveTheme] = useState<string>(() => {
-    try {
-      return localStorage.getItem('soqoor_theme') || 'golden-brown-harmony';
-    } catch {
-      return 'golden-brown-harmony';
-    }
-  });
+  const [activeTheme, setActiveTheme] = useState<string>('golden-brown-harmony');
   const [pinnedTopic, setPinnedTopic] = useState<string>('🦅 مرحباً بكم في شات حسان برو ملتقى الأحبة والأصالة • نرجو الالتزام بآداب الحوار');
   const [userMood, setUserMood] = useState<string>(() => {
     try {
@@ -2867,7 +2861,7 @@ export default function App() {
         setFalconAvatarIcon(data.logoUrl);
         try { localStorage.setItem('falcon_avatar_icon', data.logoUrl); } catch {}
       }
-      showToast('📢 تم تطبيق وتعميم الثيم والخط العام على كافة الشات من الإدارة', 'info');
+      showToast('📢 تم تطبيق وتعميم الثيم والخط العام على كاف�� الشات من الإدارة', 'info');
     });
 
     // Role Permissions live listener
@@ -3204,7 +3198,7 @@ export default function App() {
       const persistentNameColor = user.nameColor || localStorage.getItem('soqoor_name_color') || '#d97706';
       const persistentTextColor = user.textColor || localStorage.getItem('soqoor_text_color') || '#0f172a';
       const persistentNameGradient = user.nameGradient || localStorage.getItem('soqoor_name_gradient') || 'from-amber-400 to-yellow-200';
-      const persistentTheme = (user as any).theme || localStorage.getItem('soqoor_theme') || 'golden-brown-harmony';
+      const persistentTheme = activeTheme;
       const persistentFont = (user as any).fontFamily || localStorage.getItem('soqoor_font') || 'Noto Naskh Arabic';
       const persistentFontSize = (user as any).fontSize || localStorage.getItem('soqoor_chat_font_size') || 'base';
       const persistentWallpaper = (user as any).wallpaper || localStorage.getItem('soqoor_wallpaper') || 'default';
@@ -3274,7 +3268,7 @@ export default function App() {
       const persistentNameColor = user.nameColor || localStorage.getItem('soqoor_name_color') || '#d97706';
       const persistentTextColor = user.textColor || localStorage.getItem('soqoor_text_color') || '#0f172a';
       const persistentNameGradient = user.nameGradient || localStorage.getItem('soqoor_name_gradient') || 'from-amber-400 to-yellow-200';
-      const persistentTheme = (user as any).theme || localStorage.getItem('soqoor_theme') || 'golden-brown-harmony';
+      const persistentTheme = activeTheme;
       const persistentFont = (user as any).fontFamily || localStorage.getItem('soqoor_font') || 'Noto Naskh Arabic';
       const persistentFontSize = (user as any).fontSize || localStorage.getItem('soqoor_chat_font_size') || 'base';
       const persistentWallpaper = (user as any).wallpaper || localStorage.getItem('soqoor_wallpaper') || 'default';
@@ -4198,13 +4192,19 @@ export default function App() {
 
   // Unified Appearance & Styling Preference Updaters (حفظ دائم واستمرارية أسبوعية حتى بعد الخروج والعودة)
   const handleUpdateTheme = (themeId: string) => {
-    setActiveTheme(themeId);
-    try {
-      localStorage.setItem('soqoor_theme', themeId);
-      localStorage.setItem('soqoor_theme_user_set', 'true');
-    } catch {}
+  const canControlTheme = currentUser?.role === 'admin' || currentUser?.role === 'super';
+  if (!canControlTheme) {
+  showToast('الثيم العام يحدده مدير النظام فقط.', 'info');
+  return;
+  }
 
-    const selectedStyle = THEME_STYLES[themeId];
+  setActiveTheme(themeId);
+  try {
+  localStorage.setItem('soqoor_theme', themeId);
+  localStorage.setItem('soqoor_theme_user_set', 'true');
+  } catch {}
+
+  const selectedStyle = THEME_STYLES[themeId];
     if (selectedStyle?.recommendedTextColor) {
       setSettingTextColor(selectedStyle.recommendedTextColor);
       try {
@@ -11117,7 +11117,7 @@ export default function App() {
                     }`}
                   >
                     {soundsMuted ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3" />}
-                    <span>{soundsMuted ? 'الأصوات مكتومة' : 'الأصوات مفعلة'}</span>
+                    <span>{soundsMuted ? 'الأصوات مكتومة' : 'الأصوات م��علة'}</span>
                   </button>
                 </div>
 
